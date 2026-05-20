@@ -217,13 +217,13 @@ public class AdjMatrix implements Digraph
     {
         int    totalNodes, totalEdges;
 
-        if (m_graph == null)
+        totalNodes = m_lookup.size();
+        totalEdges = 0;
+
+        if (m_graph == null || totalNodes < 2)
         {
             return 0;
         }
-
-        totalNodes = m_lookup.size();
-        totalEdges = 0;
 
         for (Double[] node : m_graph)
         {
@@ -251,9 +251,9 @@ public class AdjMatrix implements Digraph
     {
         int     node, edge, totalEdges, totalPossible;
 
-        if (key == null)
+        if (key == null || !m_lookup.containsKey(key))
         {
-            return 0;
+            return -1;  // TODO should I return -1 or 0
         }
 
         node          = m_lookup.get(key);
