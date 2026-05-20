@@ -9,103 +9,98 @@ import java.util.ArrayList;
 public interface Digraph
 {
     /**
+     * Adds the specified node to the graph
      *
-     * @param key
-     * @return
+     * @param key the node to add
+     * @return true if added, false if node is already in the graph
      */
     boolean add(String key);
 
     /**
+     * Adds the specified edge to the graph. Adds the nodes if they don't already exist.
      *
-     * @param src
-     * @param dest
-     * @param weight
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @param weight the weight of the edge
+     * @return true if added, false if edge is already in the graph
      */
     boolean add(String src, String dest, Double weight);
 
     /**
+     * Deletes the specified node and all it's edges (both outbound and inbound edges).
      *
-     * @param key
-     * @return
+     * @param key the node to delete
+     * @return the name of the deleted node, or null if the node doesn't exist
      */
-    public String delete(String key);
+    String delete(String key);
 
     /**
+     * Deletes an edge from the graph.
      *
-     * @param src
-     * @param dest
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @return the weight of the deleted edge, or null if it doesn't exist
      */
-    public Double delete(String src, String dest);
+    Double delete(String src, String dest);
 
     /**
+     * Returns a list of the names of all the nodes in the graph
      *
-     * @return
+     * @return ArrayList of String node names
      */
-    public ArrayList<String> nodes();
+    ArrayList<String> nodes();
 
     /**
+     * Returns a list of all of the outbound edges from a node.
+     * TODO ask if wanting both edge weight and connecting node or just connecting nodes
      *
-     * @param key
-     * @return
+     * @param key the queried node
+     * @return ArrayList of String node names of connecting nodes
      */
-    public ArrayList<String> edges(String key);
+    ArrayList<String> edges(String key);
 
     /**
+     * Gets the weight of the specified edge
      *
-     * @param src
-     * @param dest
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @return returns the weight of the edge if it exists, null if not
      */
-    public Double weight(String src, String dest);
+    Double weight(String src, String dest);
 
     /**
+     * Calculates the unweighted density of the entire graph
      *
-     * @return
+     * @return the density of the graph
      */
-    public double density();
+    double density();
 
     /**
+     * Calculates the unweighted density of a specific node
      *
-     * @param key
-     * @return
+     * @param key the node
+     * @return the density of the node
      */
-    public double density(String key);
+    double density(String key);
 
     /**
+     * The size of the graph
      *
-     * @return
+     * @return the number of nodes in the graph
      */
-    public int size();
+    int size();
 
     /**
+     * A human-readable String representation of the graph
      *
-     * @return
+     * @return String representing the graph
      */
-    public String toString();
+    String toString();
 
     /**
+     * A JSON serialization of the graph
      *
-     * @return
+     * @return JSON String with the graph contents
      */
-    public String toJSON();
-
-    /**
-     *
-     * @param filepath
-     * @return
-     */
-    public static DWGraph load(String filepath)
-    {
-        return null;
-    }
-
-    /**
-     *
-     */
-    private void convert()
-    {
-
-    }
+    String toJSON();
 }
