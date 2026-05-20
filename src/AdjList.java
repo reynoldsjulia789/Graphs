@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
  * Reflection Questions: TODO answer questions
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 
 public class AdjList implements Digraph
 {
+    private HashMap<String, HashMap<String, Double>> m_graph;
+
     /**
      *
      * @param key

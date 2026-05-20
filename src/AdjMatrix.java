@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
  * Reflection Questions: TODO answer questions
@@ -9,6 +10,9 @@ import java.util.ArrayList;
 
 public class AdjMatrix implements Digraph
 {
+    private Double[][]               m_graph;       // [from node][to node]
+    private HashMap<String, Integer> m_lookup;
+
     /**
      *
      * @param key
@@ -17,20 +21,60 @@ public class AdjMatrix implements Digraph
     @Override
     public boolean add(String key)
     {
-        return false;
+        if (m_lookup.containsKey(key))
+        {
+            return false;
+        }
+
+        // TODO determine what int to add, and if need to add to [][] now
+        m_lookup.put(key, null);
+
+        return true;
     }
 
     /**
-     *
-     * @param src
-     * @param dest
-     * @param weight
-     * @return
+     * Adds an edge to the graph. Adds the nodes if they do not already exist.
+     * @param src the source node
+     * @param dest the destination node
+     * @param weight the edge weight
+     * @return true if edge was added successfully, false if edge is already in graph or
+     * caller passes null source or destination nodes
      */
     @Override
     public boolean add(String src, String dest, Double weight)
     {
-        return false;
+        Integer srcNode, destNode;
+
+        if (src == null || dest == null)
+        {
+            return false;
+        }
+
+        srcNode  = m_lookup.get(src);
+        destNode = m_lookup.get(dest);
+
+        if (srcNode == null)
+        {
+            add(src);
+
+            srcNode = m_lookup.get(src);
+        }
+
+        if (destNode == null)
+        {
+            add(src);
+
+            destNode = m_lookup.get(dest);
+        }
+
+        if (m_graph[srcNode][destNode] != null)
+        {
+            return false;
+        }
+
+        m_graph[srcNode][destNode] = weight;
+
+        return true;
     }
 
     /**
@@ -57,67 +101,141 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     *
-     * @return
+     * Returns a list of the nodes in the graph.
+     * @return An ArrayList of the node names in the graph
      */
     @Override
     public ArrayList<String> nodes()
     {
-        return null;
+        ArrayList<String> nodes;
+
+        nodes = new ArrayList<>(m_lookup.keySet());
+
+        return nodes;
     }
 
     /**
-     *
-     * @param key
-     * @return
+     * Lists all outgoing edges from a node
+     * @param key the node
+     * @return ArrayList of Strings with the names of the nodes to which the
+     * key has an outgoing edge
      */
     @Override
     public ArrayList<String> edges(String key)
     {
-        return null;
+        int src, dest;
+        ArrayList<String> edges;
+
+        if (key == null)
+        {
+            return null;            // TODO should I return null or throw an exception?
+        }
+
+        src   = m_lookup.get(key);
+        edges = new ArrayList<>();
+
+        for (dest = 0; dest < m_graph.length; dest++)
+        {
+            if (m_graph[src][dest] != null)
+            {
+                edges.addLast(null); // TODO how to get node name from lookup based on int location efficiently?
+            }
+        }
+
+        return edges;
     }
 
     /**
-     *
-     * @param src
-     * @param dest
-     * @return
+     * Finds the weight of the edge from the source node to the destination node if the edge
+     * exists. If not, returns null.
+     * @param src the source node
+     * @param dest the destination node
+     * @return Double representing the weight of the edge, or null if no edge exists
      */
     @Override
     public Double weight(String src, String dest)
     {
-        return 0.0;
+        int srcNode, destNode;
+
+        if (src == null || dest == null)
+        {
+            return null;
+        }
+
+        srcNode  = m_lookup.get(src);
+        destNode = m_lookup.get(dest);
+
+        return m_graph[srcNode][destNode];
     }
 
     /**
-     *
-     * @return
+     * Calculates the unweighted density of the entire graph
+     * @return the density of the graph
      */
     @Override
     public double density()
     {
-        return 0;
+        double density;
+
+        density = 0;
+
+        if (m_graph == null)
+        {
+            return 0;
+        }
+
+        for (Double[] node : m_graph)
+        {
+            for (Double edge : node)
+            {
+                if (edge != null)
+                {
+                    density++;
+                }
+            }
+        }
+
+        return density;
     }
 
     /**
-     *
-     * @param key
-     * @return
+     * Calculates the unweighted density of the specified node
+     * @param key the node to calculate the density of
+     * @return the density of the node
      */
     @Override
     public double density(String key)
     {
-        return 0;
+        int     node, edge;
+        double  density;
+
+        if (key == null)
+        {
+            return 0;
+        }
+
+        node    = m_lookup.get(key);
+        density = 0;
+
+        for (edge = 0; edge < m_graph.length; edge++)
+        {
+            if (m_graph[node][edge] != null)
+            {
+                density++;
+            }
+        }
+
+        return density;
     }
 
     /**
-     *
-     * @return
+     * Returns the number of nodes in the graph
+     * @return int number of nodes
      */
     @Override
     public int size()
     {
-        return 0;
+        return m_lookup.size();
     }
 
     /**

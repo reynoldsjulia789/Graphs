@@ -25,7 +25,7 @@ public class DWGraph
     }
 
     /**
-     * Constructor
+     *
      * @param filepath
      */
     public DWGraph(String filepath)
