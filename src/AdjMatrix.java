@@ -14,13 +14,19 @@ public class AdjMatrix implements Digraph
     private HashMap<String, Integer> m_lookup;
 
     /**
+     * Add the specified node to the graph.
      *
-     * @param key
-     * @return
+     * @param key the node to add
+     * @return true if added, false if already in graph or if key is null
      */
     @Override
     public boolean add(String key)
     {
+        if (key == null)
+        {
+            return false;
+        }
+
         if (m_lookup.containsKey(key))
         {
             return false;
