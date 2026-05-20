@@ -33,7 +33,8 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     * Adds an edge to the graph. Adds the nodes if they do not already exist.
+     * Adds the specified edge to the graph. Adds the nodes if they do not already exist.
+     *
      * @param src the source node
      * @param dest the destination node
      * @param weight the edge weight
@@ -78,30 +79,59 @@ public class AdjMatrix implements Digraph
     }
 
     /**
+     * Deletes the specified node and all its outbound and inbound edges from the graph.
      *
-     * @param key
-     * @return
+     * @param key the node to delete
+     * @return the String name of the node deleted, or null if not removed
      */
     @Override
     public String delete(String key)
     {
-        return "";
+        int nodeLocation;
+
+        if (key == null)
+        {
+            return null;                // TODO throw exception or return null if caller passes null key?
+        }
+
+        nodeLocation = m_lookup.remove(key);
+
+        // TODO do I delete the row & column in the 2D array????
+
+        return key;
     }
 
     /**
+     * Deletes the specified edge from the graph.
      *
-     * @param src
-     * @param dest
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @return the weight of the deleted edge or null if the edge doesn't exist
      */
     @Override
     public Double delete(String src, String dest)
     {
-        return 0.0;
+        int    srcNode, destNode;
+        double deletedWeight;
+
+        if (src == null || dest == null)
+        {
+            return null;
+        }
+
+        srcNode       = m_lookup.get(src);
+        destNode      = m_lookup.get(dest);
+
+        deletedWeight = m_graph[srcNode][destNode];
+
+        m_graph[srcNode][destNode] = null;
+
+        return deletedWeight;
     }
 
     /**
      * Returns a list of the nodes in the graph.
+     *
      * @return An ArrayList of the node names in the graph
      */
     @Override
@@ -115,10 +145,11 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     * Lists all outgoing edges from a node
+     * Lists all outgoing edges from a node.
+     *
      * @param key the node
      * @return ArrayList of Strings with the names of the nodes to which the
-     * key has an outgoing edge
+     * key has an outgoing edge, returns null if key doesn't exist
      */
     @Override
     public ArrayList<String> edges(String key)
@@ -148,6 +179,7 @@ public class AdjMatrix implements Digraph
     /**
      * Finds the weight of the edge from the source node to the destination node if the edge
      * exists. If not, returns null.
+     *
      * @param src the source node
      * @param dest the destination node
      * @return Double representing the weight of the edge, or null if no edge exists
@@ -169,20 +201,23 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     * Calculates the unweighted density of the entire graph
+     * Calculates the unweighted density of the entire graph.
+     * TODO ask if my density calculation is correct
+     *
      * @return the density of the graph
      */
     @Override
     public double density()
     {
-        double density;
-
-        density = 0;
+        int    totalNodes, totalEdges;
 
         if (m_graph == null)
         {
             return 0;
         }
+
+        totalNodes = m_lookup.size();
+        totalEdges = 0;
 
         for (Double[] node : m_graph)
         {
@@ -190,47 +225,55 @@ public class AdjMatrix implements Digraph
             {
                 if (edge != null)
                 {
-                    density++;
+                    totalEdges++;
                 }
             }
         }
 
-        return density;
+        return (double) totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
     }
 
     /**
-     * Calculates the unweighted density of the specified node
+     * Calculates the unweighted density of the specified node.
+     * TODO how to calculate the density of a specific node? Inbound and outbound edges?
+     *
      * @param key the node to calculate the density of
      * @return the density of the node
      */
     @Override
     public double density(String key)
     {
-        int     node, edge;
-        double  density;
+        int     node, edge, totalEdges, totalPossible;
 
         if (key == null)
         {
             return 0;
         }
 
-        node    = m_lookup.get(key);
-        density = 0;
+        node          = m_lookup.get(key);
+        totalPossible = ((m_lookup.size() - 1) * 2) + 1; // 2 * number of nodes other than self + 1 self edge
+        totalEdges    = 0;
 
         for (edge = 0; edge < m_graph.length; edge++)
         {
             if (m_graph[node][edge] != null)
             {
-                density++;
+                totalEdges++;
+            }
+
+            if (edge != node && m_graph[edge][node] != null) // don't want to double count self edge
+            {
+                totalEdges++;
             }
         }
 
-        return density;
+        return (double) totalEdges / totalPossible;
     }
 
     /**
-     * Returns the number of nodes in the graph
-     * @return int number of nodes
+     * Returns the size of the graph.
+     *
+     * @return int number of nodes in the graph
      */
     @Override
     public int size()
@@ -239,8 +282,9 @@ public class AdjMatrix implements Digraph
     }
 
     /**
+     * Returns a String JSON serialization of the graph.
      *
-     * @return
+     * @return String JSON representation of the graph
      */
     @Override
     public String toJSON()
