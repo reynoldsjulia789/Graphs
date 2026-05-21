@@ -27,7 +27,7 @@ public interface Digraph
     boolean add(String src, String dest, Double weight);
 
     /**
-     * Deletes the specified node and all it's edges (both outbound and inbound edges).
+     * Deletes the specified node and all its edges (both outbound and inbound edges).
      *
      * @param key the node to delete
      * @return the name of the deleted node, or null if the node doesn't exist

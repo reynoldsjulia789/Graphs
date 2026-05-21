@@ -21,12 +21,16 @@ public class DWGraph
      */
     public DWGraph()
     {
-
+        this.graph = new AdjList();
+        this.size  = 0;
+        this.mtxThreshold = 0.25; // TODO determine good threshold & justification
+        this.lstThreshold = 0.1;
     }
 
     /**
+     * Constructs graph from JSON file
      *
-     * @param filepath
+     * @param filepath path to JSON file
      */
     public DWGraph(String filepath)
     {
@@ -34,135 +38,186 @@ public class DWGraph
     }
 
     /**
+     * Adds the specified node to the graph
      *
-     * @param key
-     * @return
+     * @param key the node to add
+     * @return true if added, false if node is already in the graph
      */
     public boolean add(String key)
     {
-        return false;
+        boolean result;
+
+        result = this.graph.add(key);
+
+        if (result)
+        {
+            this.size = this.graph.size();
+        }
+
+        return result;
     }
 
     /**
+     * Adds the specified edge to the graph. Adds the nodes if they don't already exist.
      *
-     * @param src
-     * @param dest
-     * @param weight
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @param weight the weight of the edge
+     * @return true if added, false if edge is already in the graph
      */
     public boolean add(String src, String dest, Double weight)
     {
-        return false;
+        boolean result;
+
+        result = this.graph.add(src, dest, weight);
+
+        if (result)
+        {
+            this.size = this.graph.size();
+        }
+
+        return result;
     }
 
     /**
+     * Deletes the specified node and all its edges (both outbound and inbound edges).
      *
-     * @param key
-     * @return
+     * @param key the node to delete
+     * @return the name of the deleted node, or null if the node doesn't exist
      */
     public String delete(String key)
     {
-        return null;
+        String result;
+
+        result = this.graph.delete(key);
+
+        if (result != null)
+        {
+            this.size = this.graph.size();
+        }
+
+        return result;
     }
 
     /**
+     * Deletes an edge from the graph.
      *
-     * @param src
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @return the weight of the deleted edge, or null if it doesn't exist
      */
     public Double delete(String src, String dest)
     {
-        return null;
+        Double result;
+
+        result = this.graph.delete(src, dest);
+
+        if (result != null)
+        {
+            this.size = this.graph.size();
+        }
+
+        return result;
     }
 
     /**
+     * Returns a list of the names of all the nodes in the graph
      *
-     * @return
+     * @return ArrayList of String node names
      */
     public ArrayList<String> nodes()
     {
-        return null;
+        return this.graph.nodes();
     }
 
     /**
+     * Returns a list of all of the outbound edges from a node.
+     * TODO ask if wanting both edge weight and connecting node or just connecting nodes
      *
-     * @param key
-     * @return
+     * @param key the queried node
+     * @return ArrayList of String node names of connecting nodes
      */
     public ArrayList<String> edges(String key)
     {
-        return null;
+        return this.graph.edges(key);
     }
 
     /**
+     * Gets the weight of the specified edge
      *
-     * @param src
-     * @param dest
-     * @return
+     * @param src the source node
+     * @param dest the destination node
+     * @return returns the weight of the edge if it exists, null if not
      */
     public Double weight(String src, String dest)
     {
-        return null;
+        return this.graph.weight(src, dest);
     }
 
     /**
+     * Calculates the unweighted density of the entire graph
      *
-     * @return
+     * @return the density of the graph
      */
     public double density()
     {
-        return -1;
+        return this.graph.density();
     }
 
     /**
+     * Calculates the unweighted density of a specific node
      *
-     * @param key
-     * @return
+     * @param key the node
+     * @return the density of the node
      */
     public double density(String key)
     {
-        return -1;
+        return this.graph.density(key);
     }
 
     /**
+     * The size of the graph
      *
-     * @return
+     * @return the number of nodes in the graph
      */
     public int size()
     {
-        return -1;
+        return this.size;
     }
 
     /**
+     * A human-readable String representation of the graph
      *
-     * @return
+     * @return String representing the graph
      */
     public String toString()
     {
-        return null;
+        return this.graph.toString();
     }
 
     /**
+     * A JSON serialization of the graph
      *
-     * @return
+     * @return JSON String with the graph contents
      */
     public String toJSON()
     {
-        return null;
+        return this.graph.toJSON();
     }
 
     /**
+     * Populates graph from a JSON file
      *
-     * @param filepath
-     * @return
+     * @param filepath the path to the JSON file
+     * @return the created DWGraph
      */
     public static DWGraph load(String filepath)
     {
-        return null;
+        return new DWGraph(filepath); // TODO is this valid???
     }
 
     /**
-     *
+     * Swaps between adjacency list & adjacency matrix depending on graph density
      */
     private void convert()
     {

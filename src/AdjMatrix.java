@@ -10,8 +10,13 @@ import java.util.HashMap;
 
 public class AdjMatrix implements Digraph
 {
-    private Double[][]               m_graph;       // [from node][to node]
+    private Double[][]               m_graph;       // [from node][to node] TODO should I use [][] or make with arraylists
     private HashMap<String, Integer> m_lookup;
+
+    public AdjMatrix()
+    {
+        m_lookup = new HashMap<>();
+    }
 
     /**
      * Add the specified node to the graph.
@@ -32,7 +37,7 @@ public class AdjMatrix implements Digraph
             return false;
         }
 
-        // TODO determine what int to add, and if need to add to [][] now
+        // TODO determine what int to add, and how to add to [][]
         m_lookup.put(key, null);
 
         return true;

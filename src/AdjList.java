@@ -12,6 +12,11 @@ public class AdjList implements Digraph
 {
     private HashMap<String, HashMap<String, Double>> m_graph;
 
+    public AdjList()
+    {
+        m_graph = new HashMap<>();
+    }
+
     /**
      * Adds the specified node to the graph
      *
@@ -72,7 +77,7 @@ public class AdjList implements Digraph
     }
 
     /**
-     * Deletes the specified node and all it's edges (both outbound and inbound edges).
+     * Deletes the specified node and all its edges (both outbound and inbound edges).
      *
      * @param key the node to delete
      * @return the name of the deleted node, or null if the node doesn't exist or key is null
