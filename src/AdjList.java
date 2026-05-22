@@ -2,19 +2,49 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /*
- * Reflection Questions: TODO answer questions
+ * Reflection Questions:
+ *
  * When should you use a list to represent a directed weighted graph?
+ *      You should use a list to represent a directed weighted graph when the graph is sparse.
+ *
  * Why?
+ *      Operations on an adjacency list are slower for dense graphs than on an adjacency matrix, however adjacency
+ *      lists take less space to store. So, if the graph is sparse, it makes more sense to use an adjacency list
+ *      than a matrix since the operations will take a similar time on a sparse graph, but the list takes much less
+ *      memory to store.
+ *
  * Does this reasoning hold true for other types of graphs?
+ *      Yes. Whether using a directed, undirected, weighted, or unweighted graph, if the graph is sparse, the adjacency
+ *      list is a better choice than the adjacency matrix.
  */
 
 public class AdjList implements Digraph
 {
     private HashMap<String, HashMap<String, Double>> m_graph;
+    private int                                      m_totalEdges;
 
+    /**
+     * Default Constructor
+     */
     public AdjList()
     {
-        m_graph = new HashMap<>();
+        m_graph      = new HashMap<>();
+        m_totalEdges = 0;
+    }
+
+    /**
+     * Constructs an adjacency list with the specified nodes (keys)
+     *
+     * @param nodes the nodes to add to the graph
+     */
+    public AdjList(ArrayList<String> nodes)
+    {
+        this();
+
+        for (String node : nodes)
+        {
+            add(node);
+        }
     }
 
     /**
@@ -64,6 +94,11 @@ public class AdjList implements Digraph
             m_graph.put(src, new HashMap<>());
         }
 
+        if (!m_graph.containsKey(dest))
+        {
+            m_graph.put(dest, new HashMap<>());
+        }
+
         outgoingNodes = m_graph.get(src);
 
         if (outgoingNodes.containsKey(dest))
@@ -72,6 +107,8 @@ public class AdjList implements Digraph
         }
 
         outgoingNodes.put(dest, weight);
+
+        m_totalEdges++;
 
         return true;
     }
@@ -95,13 +132,15 @@ public class AdjList implements Digraph
             return null;
         }
 
-        m_graph.remove(key); // remove node and its outgoing edges
+        m_totalEdges -= m_graph.remove(key).size(); // remove node and its outgoing edges, subtract from total edge count
 
         for (HashMap<String, Double> edges : m_graph.values()) // remove incoming edges to the node
         {
             if (edges != null)
             {
                 edges.remove(key);
+
+                m_totalEdges--;
             }
         }
 
@@ -118,7 +157,6 @@ public class AdjList implements Digraph
     @Override
     public Double delete(String src, String dest)
     {
-        Double                  deletedWeight;
         HashMap<String, Double> srcEdges;
 
         if (src == null || dest == null)
@@ -132,6 +170,8 @@ public class AdjList implements Digraph
         {
             return null;
         }
+
+        m_totalEdges--;
 
         return srcEdges.remove(dest);
     }
@@ -152,8 +192,7 @@ public class AdjList implements Digraph
     }
 
     /**
-     * Returns a list of all of the outbound edges from a node.
-     * TODO ask if wanting both edge weight and connecting node or just connecting nodes
+     * Returns a list of all outbound edges from a node.
      *
      * @param key the queried node
      * @return ArrayList of String node names of connecting nodes, returns null if key doesn't
@@ -209,29 +248,23 @@ public class AdjList implements Digraph
     @Override
     public double density()
     {
-        int totalNodes, totalEdges;
+        int totalNodes;
 
         totalNodes = m_graph.size();
-        totalEdges = 0;
 
         if (totalNodes < 2)
         {
             return 0;
         }
 
-        for (HashMap<String, Double> nodeEdges : m_graph.values())
-        {
-            totalEdges += nodeEdges.size();
-        }
-
-        return (double) totalEdges / (totalNodes * (totalNodes - 1));
+        return (double) m_totalEdges / (totalNodes * (totalNodes - 1));
     }
 
     /**
      * Calculates the unweighted density of a specific node
      *
      * @param key the node
-     * @return the density of the node
+     * @return the density of the node, -1 indicates failure
      */
     @Override
     public double density(String key)
@@ -240,18 +273,15 @@ public class AdjList implements Digraph
 
         if (key == null || !m_graph.containsKey(key))
         {
-            return -1; // TODO should I return -1 or 0 if key doesn't exist
+            return -1;
         }
 
-        totalPossible = ((m_graph.size() - 1) * 2) + 1; // 2 * number of nodes other than self + 1 self edge
+        totalPossible = m_graph.size() - 1; // count outgoing edges only, no self edges
         totalEdges    = m_graph.get(key).size();
 
-        for (HashMap<String, Double> node : m_graph.values())
+        if (totalPossible < 1)
         {
-            if (node.containsKey(key))
-            {
-                totalEdges++;
-            }
+            return 0;
         }
 
         return (double) totalEdges / totalPossible;
@@ -268,7 +298,7 @@ public class AdjList implements Digraph
         return m_graph.size();
     }
 
-    /**
+    /** TODO implement JSON to string for adjlist
      * A JSON serialization of the graph
      *
      * @return JSON String with the graph contents
@@ -276,6 +306,6 @@ public class AdjList implements Digraph
     @Override
     public String toJSON()
     {
-        return "";
+        return "Not Yet Implemented";
     }
 }

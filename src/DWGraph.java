@@ -1,9 +1,15 @@
 import java.util.ArrayList;
 
 /*
- * Reflection Questions: TODO answer questions
+ * Reflection Questions:
  * What benefit does using a facade provide?
+ *      It allows the user to make use of the functionality without worrying about what is happening 'under the hood.'
+ *      In the case of the directed weighted graph, the user can simply create a graph and perform any operations they
+ *      need to on the graph without having to worry about the actual implementation details of the graph.
  * What would happen if this file was omitted from the assignment specifications?
+ *      The user would need to essentially create their own version of the directed weighted graph if they were wanting
+ *      the same functionality from their graph. They would have to think about what structure to use to store the
+ *      graph, when to switch, how to set up the graph, and everything else.
  */
 
 /**
@@ -23,8 +29,8 @@ public class DWGraph
     {
         this.graph = new AdjList();
         this.size  = 0;
-        this.mtxThreshold = 0.25; // TODO determine good threshold & justification
-        this.lstThreshold = 0.1;
+        this.mtxThreshold = 0.6; // TODO determine good threshold & justification
+        this.lstThreshold = 0.3;
     }
 
     /**
@@ -76,6 +82,8 @@ public class DWGraph
             this.size = this.graph.size();
         }
 
+        convert();
+
         return result;
     }
 
@@ -95,6 +103,8 @@ public class DWGraph
         {
             this.size = this.graph.size();
         }
+
+        convert();
 
         return result;
     }
@@ -117,6 +127,8 @@ public class DWGraph
             this.size = this.graph.size();
         }
 
+        convert();
+
         return result;
     }
 
@@ -131,8 +143,7 @@ public class DWGraph
     }
 
     /**
-     * Returns a list of all of the outbound edges from a node.
-     * TODO ask if wanting both edge weight and connecting node or just connecting nodes
+     * Returns a list of all outbound edges from a node
      *
      * @param key the queried node
      * @return ArrayList of String node names of connecting nodes
@@ -221,6 +232,34 @@ public class DWGraph
      */
     private void convert()
     {
+        double density;
 
+        density = this.graph.density();
+
+        if ((density > this.mtxThreshold) && !(this.graph instanceof AdjMatrix))
+        {
+            convertToMatrix();
+        }
+
+        if ((density < this.lstThreshold) && !(this.graph instanceof AdjList))
+        {
+            convertToList();
+        }
+    }
+
+    /**
+     * converts the graph stored as an adjacency list to an adjacency matrix
+     */
+    private void convertToMatrix()
+    {
+        // TODO convert list to matrix
+    }
+
+    /**
+     * converts the graph stored as an adjacency matrix to an adjacency list
+     */
+    private void convertToList()
+    {
+        // TODO convert matrix to list
     }
 }

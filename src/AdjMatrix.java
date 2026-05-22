@@ -1,21 +1,55 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Stack;
 
 /*
- * Reflection Questions: TODO answer questions
+ * Reflection Questions:
+ *
  * When should you use a matrix to represent a directed weighted graph?
+ *      You should use a matrix to represent a directed weighted graph when the graph is dense.
+ *
  * Why?
+ *      The adjacency matrix performs operations much faster on a dense graph than an adjacency list does, however it
+ *      takes up more space in memory to store it. So, it should be used for a dense graph to get the faster operation
+ *      times, but when the graph is sparse, an adjacency list should be used instead.
+ *
  * Does this reasoning hold true for other types of graphs?
+ *      Yes. Whether using a directed, undirected, weighted, or unweighted graph, if the graph is dense, the adjacency
+ *      matrix is a better choice than the adjacency list.
  */
 
 public class AdjMatrix implements Digraph
 {
-    private Double[][]               m_graph;       // [from node][to node] TODO should I use [][] or make with arraylists
+    private int                      m_totalEdges;
+    private Double[][]               m_graph;       // [from node][to node]
     private HashMap<String, Integer> m_lookup;
+    private Stack<Integer>           m_available;   // empty spaces in 2D array
 
-    public AdjMatrix()
+    /**
+     * Constructs an adjacency matrix with the specified nodes
+     *
+     * @param nodes an array list of nodes to add to the matrix
+     */
+    public AdjMatrix(ArrayList<String> nodes)
     {
-        m_lookup = new HashMap<>();
+        int arraySize, idx;
+
+        arraySize    = nodes.size() * 2;
+        m_lookup     = new HashMap<>();
+        m_graph      = new Double[arraySize][arraySize];
+        m_available  = new Stack<>();
+        m_totalEdges = 0;
+
+        for (idx = (arraySize - 1); idx >= 0; idx--)
+        {
+            m_available.push(idx);
+        }
+
+        for (String node : nodes)
+        {
+            add(node);
+        }
     }
 
     /**
@@ -37,8 +71,12 @@ public class AdjMatrix implements Digraph
             return false;
         }
 
-        // TODO determine what int to add, and how to add to [][]
-        m_lookup.put(key, null);
+        if (m_available.isEmpty())
+        {
+            resizeUp();
+        }
+
+        m_lookup.put(key, m_available.pop());
 
         return true;
     }
@@ -74,7 +112,7 @@ public class AdjMatrix implements Digraph
 
         if (destNode == null)
         {
-            add(src);
+            add(dest);
 
             destNode = m_lookup.get(dest);
         }
@@ -85,6 +123,8 @@ public class AdjMatrix implements Digraph
         }
 
         m_graph[srcNode][destNode] = weight;
+
+        m_totalEdges++;
 
         return true;
     }
@@ -98,16 +138,27 @@ public class AdjMatrix implements Digraph
     @Override
     public String delete(String key)
     {
-        int nodeLocation;
+        int idx, nodeLocation;
 
         if (key == null)
         {
-            return null;                // TODO throw exception or return null if caller passes null key?
+            return null;
         }
 
         nodeLocation = m_lookup.remove(key);
 
-        // TODO do I delete the row & column in the 2D array????
+        for (idx = 0; idx < m_graph.length; idx++)
+        {
+            m_graph[nodeLocation][idx] = null;
+            m_graph[idx][nodeLocation] = null;
+        }
+
+        m_available.push(nodeLocation);
+
+        if (m_lookup.size() < (m_graph.length / 4)) // resize if array is less than 1/4 full
+        {
+            resizeDown();
+        }
 
         return key;
     }
@@ -136,8 +187,60 @@ public class AdjMatrix implements Digraph
         deletedWeight = m_graph[srcNode][destNode];
 
         m_graph[srcNode][destNode] = null;
+        m_totalEdges--;
 
         return deletedWeight;
+    }
+
+    /**
+     * Resizes the 2D array to double the amount of existing nodes.
+     * Use this method if the array size needs to be enlarged.
+     */
+    private void resizeUp()
+    {
+        Double[][]     newGraph;
+        int            arraySize, edgeIdx, nodeIdx, availableIdx;
+
+        if (!m_available.isEmpty())
+        {
+            return;
+        }
+
+        arraySize    = m_lookup.size() * 2;
+        newGraph     = new Double[arraySize][arraySize];
+
+        for (nodeIdx = 0; nodeIdx < m_graph.length; nodeIdx++)
+        {
+            for (edgeIdx = 0; edgeIdx < m_graph.length; edgeIdx++)
+            {
+                newGraph[nodeIdx][edgeIdx] = m_graph[nodeIdx][edgeIdx];
+            }
+        }
+
+        for (availableIdx = arraySize - 1; availableIdx > m_graph.length - 1; availableIdx--)
+        {
+            m_available.push(availableIdx);
+        }
+
+        m_graph = newGraph;
+    }
+
+    /** TODO how to resize smaller without doing a ton of extra work
+     * Resizes the 2D array to double the amount of existing nodes.
+     * Use this method if the array size needs to be shrunk.
+     */
+    private void resizeDown()
+    {
+        Double[][] newGraph;
+        int        arraySize, newIdx, oldIdx;
+
+        arraySize    = m_lookup.size() * 2;
+        newGraph     = new Double[arraySize][arraySize];
+        newIdx       = 0;
+
+        // how to resize array from large to small...
+
+//        m_graph = newGraph;
     }
 
     /**
@@ -165,12 +268,13 @@ public class AdjMatrix implements Digraph
     @Override
     public ArrayList<String> edges(String key)
     {
-        int src, dest;
+        int               src, dest;
         ArrayList<String> edges;
+        String            destNode;
 
         if (key == null)
         {
-            return null;            // TODO should I return null or throw an exception?
+            return null;
         }
 
         src   = m_lookup.get(key);
@@ -180,7 +284,18 @@ public class AdjMatrix implements Digraph
         {
             if (m_graph[src][dest] != null)
             {
-                edges.addLast(null); // TODO how to get node name from lookup based on int location efficiently?
+                destNode = null;
+
+                for (String node : m_lookup.keySet())  // TODO is there any way to make this process more efficient?
+                {
+                    if (Objects.equals(m_lookup.get(node), dest))
+                    {
+                        destNode = node;
+                        break;
+                    }
+                }
+
+                edges.addLast(destNode);
             }
         }
 
@@ -213,43 +328,29 @@ public class AdjMatrix implements Digraph
 
     /**
      * Calculates the unweighted density of the entire graph.
-     * TODO ask if my density calculation is correct
      *
      * @return the density of the graph
      */
     @Override
     public double density()
     {
-        int    totalNodes, totalEdges;
+        int    totalNodes;
 
         totalNodes = m_lookup.size();
-        totalEdges = 0;
 
         if (m_graph == null || totalNodes < 2)
         {
             return 0;
         }
 
-        for (Double[] node : m_graph)
-        {
-            for (Double edge : node)
-            {
-                if (edge != null)
-                {
-                    totalEdges++;
-                }
-            }
-        }
-
-        return (double) totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
+        return (double) m_totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
     }
 
     /**
      * Calculates the unweighted density of the specified node.
-     * TODO how to calculate the density of a specific node? Inbound and outbound edges?
      *
      * @param key the node to calculate the density of
-     * @return the density of the node
+     * @return the density of the node, -1 indicates failure
      */
     @Override
     public double density(String key)
@@ -258,21 +359,21 @@ public class AdjMatrix implements Digraph
 
         if (key == null || !m_lookup.containsKey(key))
         {
-            return -1;  // TODO should I return -1 or 0
+            return -1;
         }
 
         node          = m_lookup.get(key);
-        totalPossible = ((m_lookup.size() - 1) * 2) + 1; // 2 * number of nodes other than self + 1 self edge
+        totalPossible = m_lookup.size() - 1; // self edge not counted
         totalEdges    = 0;
+
+        if (totalPossible < 1)
+        {
+            return 0;
+        }
 
         for (edge = 0; edge < m_graph.length; edge++)
         {
             if (m_graph[node][edge] != null)
-            {
-                totalEdges++;
-            }
-
-            if (edge != node && m_graph[edge][node] != null) // don't want to double count self edge
             {
                 totalEdges++;
             }
