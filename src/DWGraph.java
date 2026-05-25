@@ -40,7 +40,10 @@ public class DWGraph
      */
     public DWGraph(String filepath)
     {
+        ArrayList<String> nodes;
+        ArrayList<String> edges;
 
+        // TODO read json file into graph
     }
 
     /**
