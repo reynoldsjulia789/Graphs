@@ -20,16 +20,16 @@ import java.util.HashMap;
 
 public class AdjList implements Digraph
 {
-    private HashMap<String, HashMap<String, Double>> m_graph;
-    private int                                      m_totalEdges;
+    private HashMap<String, HashMap<String, Double>> connections;
+    private int                                      totalEdges;
 
     /**
      * Default Constructor
      */
     public AdjList()
     {
-        m_graph      = new HashMap<>();
-        m_totalEdges = 0;
+        this.connections = new HashMap<>();
+        this.totalEdges  = 0;
     }
 
     /**
@@ -61,12 +61,12 @@ public class AdjList implements Digraph
             return false;
         }
 
-        if (m_graph.containsKey(key))
+        if (this.connections.containsKey(key))
         {
             return false;
         }
 
-        m_graph.put(key, new HashMap<>());
+        this.connections.put(key, new HashMap<>());
 
         return true;
     }
@@ -89,17 +89,17 @@ public class AdjList implements Digraph
             return false;
         }
 
-        if (!m_graph.containsKey(src))
+        if (!this.connections.containsKey(src))
         {
-            m_graph.put(src, new HashMap<>());
+            this.connections.put(src, new HashMap<>());
         }
 
-        if (!m_graph.containsKey(dest))
+        if (!this.connections.containsKey(dest))
         {
-            m_graph.put(dest, new HashMap<>());
+            this.connections.put(dest, new HashMap<>());
         }
 
-        outgoingNodes = m_graph.get(src);
+        outgoingNodes = this.connections.get(src);
 
         if (outgoingNodes.containsKey(dest))
         {
@@ -108,7 +108,7 @@ public class AdjList implements Digraph
 
         outgoingNodes.put(dest, weight);
 
-        m_totalEdges++;
+        this.totalEdges++;
 
         return true;
     }
@@ -127,20 +127,20 @@ public class AdjList implements Digraph
             return null;
         }
 
-        if (!m_graph.containsKey(key))
+        if (!this.connections.containsKey(key))
         {
             return null;
         }
 
-        m_totalEdges -= m_graph.remove(key).size(); // remove node and its outgoing edges, subtract from total edge count
+        this.totalEdges -= this.connections.remove(key).size(); // remove node and its outgoing edges, subtract from total edge count
 
-        for (HashMap<String, Double> edges : m_graph.values()) // remove incoming edges to the node
+        for (HashMap<String, Double> edges : this.connections.values()) // remove incoming edges to the node
         {
             if (edges != null)
             {
                 edges.remove(key);
 
-                m_totalEdges--;
+                this.totalEdges--;
             }
         }
 
@@ -164,14 +164,14 @@ public class AdjList implements Digraph
             return null;
         }
 
-        srcEdges = m_graph.get(src);
+        srcEdges = this.connections.get(src);
 
         if (srcEdges == null || srcEdges.isEmpty() || !srcEdges.containsKey(dest))
         {
             return null;
         }
 
-        m_totalEdges--;
+        this.totalEdges--;
 
         return srcEdges.remove(dest);
     }
@@ -186,7 +186,7 @@ public class AdjList implements Digraph
     {
         ArrayList<String> nodes;
 
-        nodes = new ArrayList<>(m_graph.keySet());
+        nodes = new ArrayList<>(this.connections.keySet());
 
         return nodes;
     }
@@ -203,12 +203,12 @@ public class AdjList implements Digraph
     {
         ArrayList<String> edges;
 
-        if (key == null || !m_graph.containsKey(key))
+        if (key == null || !this.connections.containsKey(key))
         {
             return null;
         }
 
-        edges = new ArrayList<>(m_graph.get(key).keySet());
+        edges = new ArrayList<>(this.connections.get(key).keySet());
 
         return edges;
     }
@@ -225,12 +225,12 @@ public class AdjList implements Digraph
     {
         HashMap<String, Double> outEdges;
 
-        if (src == null || dest == null || !m_graph.containsKey(src))
+        if (src == null || dest == null || !this.connections.containsKey(src))
         {
             return null;
         }
 
-        outEdges = m_graph.get(src);
+        outEdges = this.connections.get(src);
 
         if (!outEdges.containsKey(dest))
         {
@@ -250,14 +250,14 @@ public class AdjList implements Digraph
     {
         int totalNodes;
 
-        totalNodes = m_graph.size();
+        totalNodes = this.connections.size();
 
         if (totalNodes < 2)
         {
             return 0;
         }
 
-        return (double) m_totalEdges / (totalNodes * (totalNodes - 1));
+        return (double) this.totalEdges / (totalNodes * (totalNodes - 1));
     }
 
     /**
@@ -271,13 +271,13 @@ public class AdjList implements Digraph
     {
         int totalPossible, totalEdges;
 
-        if (key == null || !m_graph.containsKey(key))
+        if (key == null || !this.connections.containsKey(key))
         {
             return -1;
         }
 
-        totalPossible = m_graph.size() - 1; // count outgoing edges only, no self edges
-        totalEdges    = m_graph.get(key).size();
+        totalPossible = this.connections.size() - 1; // count outgoing edges only, no self edges
+        totalEdges    = this.connections.get(key).size();
 
         if (totalPossible < 1)
         {
@@ -295,7 +295,7 @@ public class AdjList implements Digraph
     @Override
     public int size()
     {
-        return m_graph.size();
+        return this.connections.size();
     }
 
     /** TODO implement JSON to string for adjlist

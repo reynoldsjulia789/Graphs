@@ -21,10 +21,10 @@ import java.util.Stack;
 
 public class AdjMatrix implements Digraph
 {
-    private int                      m_totalEdges;
-    private Double[][]               m_graph;       // [from node][to node]
-    private HashMap<String, Integer> m_lookup;
-    private Stack<Integer>           m_available;   // empty spaces in 2D array
+    private int                      totalEdges;
+    private Double[][]               weights;       // [from node][to node]
+    private HashMap<String, Integer> keyMap;
+    private Stack<Integer>           available;    // empty spaces in 2D array
 
     /**
      * Constructs an adjacency matrix with the specified nodes
@@ -35,15 +35,15 @@ public class AdjMatrix implements Digraph
     {
         int arraySize, idx;
 
-        arraySize    = nodes.size() * 2;
-        m_lookup     = new HashMap<>();
-        m_graph      = new Double[arraySize][arraySize];
-        m_available  = new Stack<>();
-        m_totalEdges = 0;
+        arraySize       = nodes.size() * 2;
+        this.keyMap     = new HashMap<>();
+        this.weights    = new Double[arraySize][arraySize];
+        this.available  = new Stack<>();
+        this.totalEdges = 0;
 
         for (idx = (arraySize - 1); idx >= 0; idx--)
         {
-            m_available.push(idx);
+            this.available.push(idx);
         }
 
         for (String node : nodes)
@@ -66,17 +66,17 @@ public class AdjMatrix implements Digraph
             return false;
         }
 
-        if (m_lookup.containsKey(key))
+        if (this.keyMap.containsKey(key))
         {
             return false;
         }
 
-        if (m_available.isEmpty())
+        if (this.available.isEmpty())
         {
             resizeUp();
         }
 
-        m_lookup.put(key, m_available.pop());
+        this.keyMap.put(key, this.available.pop());
 
         return true;
     }
@@ -100,31 +100,31 @@ public class AdjMatrix implements Digraph
             return false;
         }
 
-        srcNode  = m_lookup.get(src);
-        destNode = m_lookup.get(dest);
+        srcNode  = this.keyMap.get(src);
+        destNode = this.keyMap.get(dest);
 
         if (srcNode == null)
         {
             add(src);
 
-            srcNode = m_lookup.get(src);
+            srcNode = this.keyMap.get(src);
         }
 
         if (destNode == null)
         {
             add(dest);
 
-            destNode = m_lookup.get(dest);
+            destNode = this.keyMap.get(dest);
         }
 
-        if (m_graph[srcNode][destNode] != null)
+        if (this.weights[srcNode][destNode] != null)
         {
             return false;
         }
 
-        m_graph[srcNode][destNode] = weight;
+        this.weights[srcNode][destNode] = weight;
 
-        m_totalEdges++;
+        this.totalEdges++;
 
         return true;
     }
@@ -145,17 +145,17 @@ public class AdjMatrix implements Digraph
             return null;
         }
 
-        nodeLocation = m_lookup.remove(key);
+        nodeLocation = this.keyMap.remove(key);
 
-        for (idx = 0; idx < m_graph.length; idx++)
+        for (idx = 0; idx < this.weights.length; idx++)
         {
-            m_graph[nodeLocation][idx] = null;
-            m_graph[idx][nodeLocation] = null;
+            this.weights[nodeLocation][idx] = null;
+            this.weights[idx][nodeLocation] = null;
         }
 
-        m_available.push(nodeLocation);
+        this.available.push(nodeLocation);
 
-        if (m_lookup.size() < (m_graph.length / 4)) // resize if array is less than 1/4 full
+        if (this.keyMap.size() < (this.weights.length / 4)) // resize if array is less than 1/4 full
         {
             resizeDown();
         }
@@ -181,13 +181,13 @@ public class AdjMatrix implements Digraph
             return null;
         }
 
-        srcNode       = m_lookup.get(src);
-        destNode      = m_lookup.get(dest);
+        srcNode       = this.keyMap.get(src);
+        destNode      = this.keyMap.get(dest);
 
-        deletedWeight = m_graph[srcNode][destNode];
+        deletedWeight = this.weights[srcNode][destNode];
 
-        m_graph[srcNode][destNode] = null;
-        m_totalEdges--;
+        this.weights[srcNode][destNode] = null;
+        this.totalEdges--;
 
         return deletedWeight;
     }
@@ -201,28 +201,28 @@ public class AdjMatrix implements Digraph
         Double[][]     newGraph;
         int            arraySize, edgeIdx, nodeIdx, availableIdx;
 
-        if (!m_available.isEmpty())
+        if (!this.available.isEmpty())
         {
             return;
         }
 
-        arraySize    = m_lookup.size() * 2;
+        arraySize    = this.keyMap.size() * 2;
         newGraph     = new Double[arraySize][arraySize];
 
-        for (nodeIdx = 0; nodeIdx < m_graph.length; nodeIdx++)
+        for (nodeIdx = 0; nodeIdx < this.weights.length; nodeIdx++)
         {
-            for (edgeIdx = 0; edgeIdx < m_graph.length; edgeIdx++)
+            for (edgeIdx = 0; edgeIdx < this.weights.length; edgeIdx++)
             {
-                newGraph[nodeIdx][edgeIdx] = m_graph[nodeIdx][edgeIdx];
+                newGraph[nodeIdx][edgeIdx] = this.weights[nodeIdx][edgeIdx];
             }
         }
 
-        for (availableIdx = arraySize - 1; availableIdx > m_graph.length - 1; availableIdx--)
+        for (availableIdx = arraySize - 1; availableIdx > this.weights.length - 1; availableIdx--)
         {
-            m_available.push(availableIdx);
+            this.available.push(availableIdx);
         }
 
-        m_graph = newGraph;
+        this.weights = newGraph;
     }
 
     /** TODO how to resize smaller without doing a ton of extra work
@@ -234,13 +234,13 @@ public class AdjMatrix implements Digraph
         Double[][] newGraph;
         int        arraySize, newIdx, oldIdx;
 
-        arraySize    = m_lookup.size() * 2;
+        arraySize    = this.keyMap.size() * 2;
         newGraph     = new Double[arraySize][arraySize];
         newIdx       = 0;
 
         // how to resize array from large to small...
 
-//        m_graph = newGraph;
+//        this.weights = newGraph;
     }
 
     /**
@@ -253,7 +253,7 @@ public class AdjMatrix implements Digraph
     {
         ArrayList<String> nodes;
 
-        nodes = new ArrayList<>(m_lookup.keySet());
+        nodes = new ArrayList<>(this.keyMap.keySet());
 
         return nodes;
     }
@@ -277,18 +277,18 @@ public class AdjMatrix implements Digraph
             return null;
         }
 
-        src   = m_lookup.get(key);
+        src   = this.keyMap.get(key);
         edges = new ArrayList<>();
 
-        for (dest = 0; dest < m_graph.length; dest++)
+        for (dest = 0; dest < this.weights.length; dest++)
         {
-            if (m_graph[src][dest] != null)
+            if (this.weights[src][dest] != null)
             {
                 destNode = null;
 
-                for (String node : m_lookup.keySet())
+                for (String node : this.keyMap.keySet())
                 {
-                    if (Objects.equals(m_lookup.get(node), dest))
+                    if (Objects.equals(this.keyMap.get(node), dest))
                     {
                         destNode = node;
                         break;
@@ -320,10 +320,10 @@ public class AdjMatrix implements Digraph
             return null;
         }
 
-        srcNode  = m_lookup.get(src);
-        destNode = m_lookup.get(dest);
+        srcNode  = this.keyMap.get(src);
+        destNode = this.keyMap.get(dest);
 
-        return m_graph[srcNode][destNode];
+        return this.weights[srcNode][destNode];
     }
 
     /**
@@ -336,14 +336,14 @@ public class AdjMatrix implements Digraph
     {
         int    totalNodes;
 
-        totalNodes = m_lookup.size();
+        totalNodes = this.keyMap.size();
 
-        if (m_graph == null || totalNodes < 2)
+        if (this.weights == null || totalNodes < 2)
         {
             return 0;
         }
 
-        return (double) m_totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
+        return (double) this.totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
     }
 
     /**
@@ -357,13 +357,13 @@ public class AdjMatrix implements Digraph
     {
         int     node, edge, totalEdges, totalPossible;
 
-        if (key == null || !m_lookup.containsKey(key))
+        if (key == null || !this.keyMap.containsKey(key))
         {
             return -1;
         }
 
-        node          = m_lookup.get(key);
-        totalPossible = m_lookup.size() - 1; // self edge not counted
+        node          = this.keyMap.get(key);
+        totalPossible = this.keyMap.size() - 1; // self edge not counted
         totalEdges    = 0;
 
         if (totalPossible < 1)
@@ -371,9 +371,9 @@ public class AdjMatrix implements Digraph
             return 0;
         }
 
-        for (edge = 0; edge < m_graph.length; edge++)
+        for (edge = 0; edge < this.weights.length; edge++)
         {
-            if (m_graph[node][edge] != null)
+            if (this.weights[node][edge] != null)
             {
                 totalEdges++;
             }
@@ -390,7 +390,19 @@ public class AdjMatrix implements Digraph
     @Override
     public int size()
     {
-        return m_lookup.size();
+        return this.keyMap.size();
+    }
+
+    /**
+     * A human-readable String representation of the graph
+     *
+     * @return String representing the graph
+     */
+    @Override
+    public String toString()
+    {
+        return  null;
+        // TODO Implement human-readable string representation of graph
     }
 
     /**
