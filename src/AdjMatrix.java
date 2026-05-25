@@ -414,5 +414,6 @@ public class AdjMatrix implements Digraph
     public String toJSON()
     {
         return "";
+        // TODO JSON serialization
     }
 }

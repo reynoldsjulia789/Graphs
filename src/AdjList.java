@@ -298,6 +298,18 @@ public class AdjList implements Digraph
         return this.connections.size();
     }
 
+    /**
+     * A human-readable String representation of the graph
+     *
+     * @return String representing the graph
+     */
+    @Override
+    public String toString()
+    {
+        return  null;
+        // TODO Implement human-readable string representation of graph
+    }
+
     /** TODO implement JSON to string for adjlist
      * A JSON serialization of the graph
      *
