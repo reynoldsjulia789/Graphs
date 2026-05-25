@@ -252,7 +252,23 @@ public class DWGraph
      */
     private void convertToMatrix()
     {
-        // TODO convert list to matrix
+        ArrayList<String> nodes, edges;
+        AdjMatrix adjMatrix;
+
+        nodes     = this.graph.nodes();
+        adjMatrix = new AdjMatrix(nodes);
+
+        for (String node : nodes)
+        {
+            edges = this.graph.edges(node);
+
+            for (String edge : edges)
+            {
+                adjMatrix.add(node, edge, this.graph.weight(node, edge));
+            }
+        }
+
+        this.graph = adjMatrix;
     }
 
     /**
@@ -260,6 +276,22 @@ public class DWGraph
      */
     private void convertToList()
     {
-        // TODO convert matrix to list
+        ArrayList<String> nodes, edges;
+        AdjList adjList;
+
+        nodes     = this.graph.nodes();
+        adjList   = new AdjList(nodes);
+
+        for (String node : nodes)
+        {
+            edges = this.graph.edges(node);
+
+            for (String edge : edges)
+            {
+                adjList.add(node, edge, this.graph.weight(node, edge));
+            }
+        }
+
+        this.graph = adjList;
     }
 }

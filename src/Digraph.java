@@ -52,7 +52,6 @@ public interface Digraph
 
     /**
      * Returns a list of all of the outbound edges from a node.
-     * TODO ask if wanting both edge weight and connecting node or just connecting nodes
      *
      * @param key the queried node
      * @return ArrayList of String node names of connecting nodes

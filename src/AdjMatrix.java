@@ -286,7 +286,7 @@ public class AdjMatrix implements Digraph
             {
                 destNode = null;
 
-                for (String node : m_lookup.keySet())  // TODO is there any way to make this process more efficient?
+                for (String node : m_lookup.keySet())
                 {
                     if (Objects.equals(m_lookup.get(node), dest))
                     {
