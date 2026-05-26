@@ -231,16 +231,48 @@ public class AdjMatrix implements Digraph
      */
     private void resizeDown()
     {
-        Double[][] newGraph;
-        int        arraySize, newIdx, oldIdx;
+        ArrayList<Integer> unusedIdxs;
+        Double[][]         newGraph;
+        int                arraySize, graphIdx, newIdx, oldIdx, idx;
+
 
         arraySize    = this.keyMap.size() * 2;
         newGraph     = new Double[arraySize][arraySize];
-        newIdx       = 0;
+        unusedIdxs   = new ArrayList<>(this.available);
 
-        // how to resize array from large to small...
+        available.clear();
 
-//        this.weights = newGraph;
+        // find all used cells and copy them over
+        for (newIdx = 0, oldIdx = 0; oldIdx < this.keyMap.size(); newIdx++, oldIdx++)
+        {
+
+            // find next used idx in old array
+            while (unusedIdxs.contains(oldIdx))
+            {
+                oldIdx++;
+            }
+
+            // copy over cells..... I think this has issues if there are skipped rows/columns in the old graph TODO fix???
+            for (graphIdx = 0; graphIdx <= newIdx; graphIdx++)
+            {
+                newGraph[newIdx][graphIdx] = this.weights[oldIdx][graphIdx];
+                newGraph[graphIdx][newIdx] = this.weights[graphIdx][oldIdx];
+            }
+
+            // update the keymapping to ensure the node links to the correct row/column of weights
+            if (newIdx != oldIdx)
+            {
+                this.keyMap.replace(lookupKey(oldIdx), newIdx);
+            }
+        }
+
+        // add available indices to stack
+        for (idx = arraySize - 1; idx >= newIdx; idx--)
+        {
+            this.available.push(idx);
+        }
+
+        this.weights = newGraph;
     }
 
     /**
@@ -284,22 +316,38 @@ public class AdjMatrix implements Digraph
         {
             if (this.weights[src][dest] != null)
             {
-                destNode = null;
-
-                for (String node : this.keyMap.keySet())
-                {
-                    if (Objects.equals(this.keyMap.get(node), dest))
-                    {
-                        destNode = node;
-                        break;
-                    }
-                }
+                destNode = lookupKey(dest);
 
                 edges.addLast(destNode);
             }
         }
 
         return edges;
+    }
+
+    /**
+     * TODO is there a better way/faster way to do this?
+     * Returns the key associated with the specified index in the 2D weights array.
+     *
+     * @param idx the index of the array to get the associated key for
+     * @return the String key associated with that index of the array, null if not found
+     */
+    private String lookupKey(int idx)
+    {
+        if (idx < 0 || idx >= this.keyMap.size())
+        {
+            return null;
+        }
+
+        for (String node : this.keyMap.keySet())
+        {
+            if (Objects.equals(this.keyMap.get(node), idx))
+            {
+                return node;
+            }
+        }
+
+        return null;
     }
 
     /**
