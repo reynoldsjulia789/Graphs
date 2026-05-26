@@ -155,10 +155,12 @@ public class AdjMatrix implements Digraph
 
         this.available.push(nodeLocation);
 
-        if (this.keyMap.size() < (this.weights.length / 4)) // resize if array is less than 1/4 full
-        {
-            resizeDown();
-        }
+        // TODO uncomment once resizeDown() works
+
+//        if (this.keyMap.size() < (this.weights.length / 4)) // resize if array is less than 1/4 full
+//        {
+//            resizeDown();
+//        }
 
         return key;
     }
@@ -225,7 +227,7 @@ public class AdjMatrix implements Digraph
         this.weights = newGraph;
     }
 
-    /** TODO how to resize smaller without doing a ton of extra work
+    /**
      * Resizes the 2D array to double the amount of existing nodes.
      * Use this method if the array size needs to be shrunk.
      */
