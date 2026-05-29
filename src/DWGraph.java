@@ -18,9 +18,9 @@ import java.util.ArrayList;
 public class DWGraph
 {
     private Digraph graph;
-    private int     size;
-    private double  mtxThreshold;
-    private double  lstThreshold;
+    private int     size;           // I would like to remove this as it is unnecessary, but it is in the assigment requirements...
+    private double  mtxThreshold;   // matrix threshold
+    private double  lstThreshold;   // list threshold
 
     /**
      * Constructor
@@ -29,8 +29,8 @@ public class DWGraph
     {
         this.graph = new AdjList();
         this.size  = 0;
-        this.mtxThreshold = 0.6; // TODO determine good threshold & justification
-        this.lstThreshold = 0.3;
+        this.mtxThreshold = 0.5;
+        this.lstThreshold = 0.25;
     }
 
     /**
@@ -196,7 +196,7 @@ public class DWGraph
      */
     public int size()
     {
-        return this.size;
+        return this.graph.size();
     }
 
     /**
@@ -241,25 +241,38 @@ public class DWGraph
 
         if ((density > this.mtxThreshold) && !(this.graph instanceof AdjMatrix))
         {
-            convertToMatrix();
+            convert(1);
         }
 
         if ((density < this.lstThreshold) && !(this.graph instanceof AdjList))
         {
-            convertToList();
+            convert(0);
         }
     }
 
     /**
      * converts the graph stored as an adjacency list to an adjacency matrix
+     * @param matrixType 0 for an adjacency list, 1 for an adjacency matrix
      */
-    private void convertToMatrix()
+    private void convert(int matrixType)
     {
         ArrayList<String> nodes, edges;
-        AdjMatrix adjMatrix;
+        Digraph           newGraph;
 
-        nodes     = this.graph.nodes();
-        adjMatrix = new AdjMatrix(nodes);
+        nodes = this.graph.nodes();
+
+        if (matrixType == 0)
+        {
+            newGraph = new AdjList(nodes);
+        }
+        else if (matrixType == 1)
+        {
+            newGraph = new AdjMatrix(nodes);
+        }
+        else
+        {
+            return; // invalid type
+        }
 
         for (String node : nodes)
         {
@@ -267,34 +280,10 @@ public class DWGraph
 
             for (String edge : edges)
             {
-                adjMatrix.add(node, edge, this.graph.weight(node, edge));
+                 newGraph.add(node, edge, this.graph.weight(node, edge));
             }
         }
 
-        this.graph = adjMatrix;
-    }
-
-    /**
-     * converts the graph stored as an adjacency matrix to an adjacency list
-     */
-    private void convertToList()
-    {
-        ArrayList<String> nodes, edges;
-        AdjList adjList;
-
-        nodes     = this.graph.nodes();
-        adjList   = new AdjList(nodes);
-
-        for (String node : nodes)
-        {
-            edges = this.graph.edges(node);
-
-            for (String edge : edges)
-            {
-                adjList.add(node, edge, this.graph.weight(node, edge));
-            }
-        }
-
-        this.graph = adjList;
+        this.graph = newGraph;
     }
 }

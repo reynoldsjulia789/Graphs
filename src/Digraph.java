@@ -1,9 +1,19 @@
 import java.util.ArrayList;
 
 /*
- * Reflection Questions: TODO answer questions
+ * Reflection Questions:
  * When did you choose to swap between the matrix and the list?
  * Explain and defend your threshold selection process.
+ *
+ * I decided to swap from a list to a matrix at .5 density and from a matrix to a list at .25 density.
+ * The two thresholds need to not be equivalent, otherwise if you are adding and deleting right around the
+ * threshold, you will be converting back and forth a bunch, which is a very time-consuming procedure.
+ * .5 is right about where the graph goes from being considered more sparse to more dense as there are roughly
+ * the same number of edges as there are vertices at that point. Since the matrix takes less time to perform operations,
+ * it makes more sense to use it for denser graphs than the list even though it takes more memory. I decided to switch
+ * back to a list if the density drops to .25 or below as the graph would then be quite sparse; it would make more
+ * sense to use a list at that point to save space, and there are few enough edges that the difference in operation
+ * time is negligible.
  */
 
 public interface Digraph
@@ -51,7 +61,7 @@ public interface Digraph
     ArrayList<String> nodes();
 
     /**
-     * Returns a list of all of the outbound edges from a node.
+     * Returns a list of all outbound edges from a node.
      *
      * @param key the queried node
      * @return ArrayList of String node names of connecting nodes
