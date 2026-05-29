@@ -322,7 +322,7 @@ public class AdjList implements Digraph
             for (String edge : edges)
             {
                 builder.append(edge)
-                        .append(" : ")
+                        .append(": ")
                         .append(weight(node, edge))
                         .append(", ");
             }
@@ -334,7 +334,7 @@ public class AdjList implements Digraph
         return  builder.toString().trim();
     }
 
-    /** TODO implement JSON to string for adjlist
+    /**
      * A JSON serialization of the graph
      *
      * @return JSON String with the graph contents
@@ -342,6 +342,36 @@ public class AdjList implements Digraph
     @Override
     public String toJSON()
     {
-        return "Not Yet Implemented";
+        ArrayList<String> nodes, edges;
+        StringBuilder     builder;
+
+        builder = new StringBuilder("{");
+        nodes   = nodes();
+
+        for (String node : nodes)
+        {
+            edges = edges(node);
+
+            builder.append("\n\t\"")
+                    .append(node)
+                    .append("\" : {");
+
+            for (String edge : edges)
+            {
+                builder.append("\n\t\t\"")
+                        .append(edge)
+                        .append("\" : ")
+                        .append(weight(node, edge))
+                        .append(",");
+            }
+
+            builder.deleteCharAt(builder.length() - 1)
+                    .append("\n\t},");
+        }
+
+        builder.deleteCharAt(builder.length() - 1)
+                .append("\n}");
+
+        return  builder.toString();
     }
 }
