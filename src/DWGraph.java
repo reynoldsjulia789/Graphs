@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /*
  * Reflection Questions:
@@ -40,10 +43,49 @@ public class DWGraph
      */
     public DWGraph(String filepath)
     {
-        ArrayList<String> nodes;
-        ArrayList<String> edges;
+        this();
 
-        // TODO read json file into graph
+        try (Scanner fileReader = new Scanner(new File(filepath)))
+        {
+            parseJSON(readJSON(fileReader));
+        }
+        catch (FileNotFoundException caught)
+        {
+            System.out.println("DWGraph - An error occurred when attempting to read the file:  "
+                    + caught.getMessage());
+        }
+    }
+
+    /**
+     * Parses the nodes and edges from the JSON and creates a graph from it.
+     *
+     * @param JSON String with the contents of the JSON file
+     */
+    private void parseJSON(final String JSON)
+    {
+        ArrayList<String> nodes;
+
+
+    }
+
+    /**
+     * Reads a JSON file into a String.
+     *
+     * @param fileReader Scanner object wrapped around a file to be read
+     * @return String holding the contents of the JSON
+     */
+    private String readJSON(Scanner fileReader)
+    {
+        StringBuilder builder;
+
+        builder = new StringBuilder();
+
+        while (fileReader.hasNext())
+        {
+            builder.append(fileReader.nextLine().trim());
+        }
+
+        return builder.toString();
     }
 
     /**
