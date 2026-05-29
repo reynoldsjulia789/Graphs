@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 /*
  * Reflection Questions:
@@ -73,7 +70,7 @@ public class AdjMatrix implements Digraph
 
         if (this.available.isEmpty())
         {
-            resizeUp();
+            resize();
         }
 
         this.keyMap.put(key, this.available.pop());
@@ -155,12 +152,10 @@ public class AdjMatrix implements Digraph
 
         this.available.push(nodeLocation);
 
-        // TODO uncomment once resizeDown() works
-
-//        if (this.keyMap.size() < (this.weights.length / 4)) // resize if array is less than 1/4 full
-//        {
-//            resizeDown();
-//        }
+        if (this.keyMap.size() < (this.weights.length / 4)) // resize if array is less than 1/4 full
+        {
+            resize();
+        }
 
         return key;
     }
@@ -176,7 +171,7 @@ public class AdjMatrix implements Digraph
     public Double delete(String src, String dest)
     {
         int    srcNode, destNode;
-        double deletedWeight;
+        Double deletedWeight;
 
         if (src == null || dest == null)
         {
@@ -188,38 +183,40 @@ public class AdjMatrix implements Digraph
 
         deletedWeight = this.weights[srcNode][destNode];
 
-        this.weights[srcNode][destNode] = null;
-        this.totalEdges--;
+        if (deletedWeight != null)
+        {
+            this.weights[srcNode][destNode] = null;
+            this.totalEdges--;
+        }
 
         return deletedWeight;
     }
 
     /**
      * Resizes the 2D array to double the amount of existing nodes.
-     * Use this method if the array size needs to be enlarged.
      */
-    private void resizeUp()
+    private void resize()
     {
         Double[][]     newGraph;
-        int            arraySize, edgeIdx, nodeIdx, availableIdx;
+        int            numOfNodes, arraySize, edgeIdx, nodeIdx, availableIdx;
 
-        if (!this.available.isEmpty())
-        {
-            return;
-        }
+        compact();
 
-        arraySize    = this.keyMap.size() * 2;
+        numOfNodes   = this.keyMap.size();
+        arraySize    = numOfNodes * 2;
         newGraph     = new Double[arraySize][arraySize];
 
-        for (nodeIdx = 0; nodeIdx < this.weights.length; nodeIdx++)
+        for (nodeIdx = 0; nodeIdx < numOfNodes; nodeIdx++)
         {
-            for (edgeIdx = 0; edgeIdx < this.weights.length; edgeIdx++)
+            for (edgeIdx = 0; edgeIdx < numOfNodes; edgeIdx++)
             {
                 newGraph[nodeIdx][edgeIdx] = this.weights[nodeIdx][edgeIdx];
             }
         }
 
-        for (availableIdx = arraySize - 1; availableIdx > this.weights.length - 1; availableIdx--)
+        this.available.clear();
+
+        for (availableIdx = arraySize - 1; availableIdx > numOfNodes - 1; availableIdx--)
         {
             this.available.push(availableIdx);
         }
@@ -228,53 +225,63 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     * Resizes the 2D array to double the amount of existing nodes.
-     * Use this method if the array size needs to be shrunk.
+     * Compacts the graph by finding the lowest unused index and moving the highest used index to the lowest unused
+     * index. When finished, all unused indices are clustered at the high end of the 2D array.
      */
-    private void resizeDown()
+    private void compact()
     {
-        ArrayList<Integer> unusedIdxs;
-        Double[][]         newGraph;
-        int                arraySize, graphIdx, newIdx, oldIdx, idx;
+        int           highestUsed, lowestUnused;
+        List<Integer> unusedIdxs, usedIdxs;
 
+        unusedIdxs = new ArrayList<>(this.available);
+        usedIdxs   = new ArrayList<>(this.keyMap.values());
 
-        arraySize    = this.keyMap.size() * 2;
-        newGraph     = new Double[arraySize][arraySize];
-        unusedIdxs   = new ArrayList<>(this.available);
-
-        available.clear();
-
-        // find all used cells and copy them over
-        for (newIdx = 0, oldIdx = 0; oldIdx < this.keyMap.size(); newIdx++, oldIdx++)
+        if ((unusedIdxs.isEmpty()) || (usedIdxs.isEmpty()))
         {
-
-            // find next used idx in old array
-            while (unusedIdxs.contains(oldIdx))
-            {
-                oldIdx++;
-            }
-
-            // copy over cells..... I think this has issues if there are skipped rows/columns in the old graph TODO fix???
-            for (graphIdx = 0; graphIdx <= newIdx; graphIdx++)
-            {
-                newGraph[newIdx][graphIdx] = this.weights[oldIdx][graphIdx];
-                newGraph[graphIdx][newIdx] = this.weights[graphIdx][oldIdx];
-            }
-
-            // update the keymapping to ensure the node links to the correct row/column of weights
-            if (newIdx != oldIdx)
-            {
-                this.keyMap.replace(lookupKey(oldIdx), newIdx);
-            }
+            return;
         }
 
-        // add available indices to stack
-        for (idx = arraySize - 1; idx >= newIdx; idx--)
+        unusedIdxs.sort(null);
+        usedIdxs  .sort(null);
+
+        lowestUnused = unusedIdxs.removeFirst();
+        highestUsed  = usedIdxs  .removeLast();
+
+        while (lowestUnused < highestUsed)
         {
-            this.available.push(idx);
+            moveNode(highestUsed, lowestUnused);
+
+            usedIdxs  .add(lowestUnused);
+            unusedIdxs.add(highestUsed);
+
+            usedIdxs  .sort(null);
+            unusedIdxs.sort(null);
+
+            lowestUnused = unusedIdxs.removeFirst();
+            highestUsed  = usedIdxs  .removeLast();
+        }
+    }
+
+    /**
+     * Relocates a node in the 2D array by moving it from the first index to the second.
+     *
+     * @param from the index to copy from
+     * @param to the index to copy to
+     */
+    private void moveNode(int from, int to)
+    {
+        int idx;
+
+        for (idx = 0; idx < this.weights.length; idx++)
+        {
+            this.weights[idx][to] = this.weights[idx][from];
+            this.weights[to][idx] = this.weights[from][idx];
         }
 
-        this.weights = newGraph;
+        this.keyMap.replace(lookupKey(from), to);
+
+        this.available.remove(to);
+        this.available.push(from);
     }
 
     /**
@@ -393,7 +400,7 @@ public class AdjMatrix implements Digraph
             return 0;
         }
 
-        return (double) this.totalEdges / (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
+        return this.totalEdges / (double) (totalNodes * (totalNodes - 1)); // current # of edges / total possible edges
     }
 
     /**
@@ -429,7 +436,7 @@ public class AdjMatrix implements Digraph
             }
         }
 
-        return (double) totalEdges / totalPossible;
+        return totalEdges / (double) totalPossible;
     }
 
     /**
@@ -451,8 +458,32 @@ public class AdjMatrix implements Digraph
     @Override
     public String toString()
     {
-        return  null;
-        // TODO Implement human-readable string representation of graph
+        ArrayList<String> nodes, edges;
+        StringBuilder     builder;
+
+        builder = new StringBuilder("AdjMatrix | ");
+        nodes   = nodes();
+
+        for (String node : nodes)
+        {
+            edges = edges(node);
+
+            builder.append(node)
+                    .append(" -> [");
+
+            for (String edge : edges)
+            {
+                builder.append(edge)
+                        .append(" : ")
+                        .append(weight(node, edge))
+                        .append(", ");
+            }
+
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("]  ");
+        }
+
+        return  builder.toString().trim();
     }
 
     /**

@@ -50,7 +50,7 @@ public class AdjList implements Digraph
     /**
      * Adds the specified node to the graph
      *
-     * @param key the node to add
+     * @param key the node to add, null keys are ignored
      * @return true if added, false if node is already in the graph
      */
     @Override
@@ -84,7 +84,7 @@ public class AdjList implements Digraph
     {
         HashMap<String, Double> outgoingNodes;
 
-        if (src == null || dest == null)
+        if ((src == null) || (dest == null))
         {
             return false;
         }
@@ -116,7 +116,7 @@ public class AdjList implements Digraph
     /**
      * Deletes the specified node and all its edges (both outbound and inbound edges).
      *
-     * @param key the node to delete
+     * @param key the node to delete, null keys are ignored
      * @return the name of the deleted node, or null if the node doesn't exist or key is null
      */
     @Override
@@ -159,14 +159,14 @@ public class AdjList implements Digraph
     {
         HashMap<String, Double> srcEdges;
 
-        if (src == null || dest == null)
+        if ((src == null) || (dest == null))
         {
             return null;
         }
 
         srcEdges = this.connections.get(src);
 
-        if (srcEdges == null || srcEdges.isEmpty() || !srcEdges.containsKey(dest))
+        if ((srcEdges == null) || (srcEdges.isEmpty()) || (!srcEdges.containsKey(dest)))
         {
             return null;
         }
@@ -203,7 +203,7 @@ public class AdjList implements Digraph
     {
         ArrayList<String> edges;
 
-        if (key == null || !this.connections.containsKey(key))
+        if ((key == null) || (!this.connections.containsKey(key)))
         {
             return null;
         }
@@ -257,7 +257,7 @@ public class AdjList implements Digraph
             return 0;
         }
 
-        return (double) this.totalEdges / (totalNodes * (totalNodes - 1));
+        return this.totalEdges / (double) (totalNodes * (totalNodes - 1));
     }
 
     /**
@@ -284,7 +284,7 @@ public class AdjList implements Digraph
             return 0;
         }
 
-        return (double) totalEdges / totalPossible;
+        return totalEdges / (double) totalPossible;
     }
 
     /**
@@ -306,8 +306,32 @@ public class AdjList implements Digraph
     @Override
     public String toString()
     {
-        return  null;
-        // TODO Implement human-readable string representation of graph
+        ArrayList<String> nodes, edges;
+        StringBuilder     builder;
+
+        builder = new StringBuilder("AdjList | ");
+        nodes   = nodes();
+
+        for (String node : nodes)
+        {
+            edges = edges(node);
+
+            builder.append(node)
+                    .append(" -> [");
+
+            for (String edge : edges)
+            {
+                builder.append(edge)
+                        .append(" : ")
+                        .append(weight(node, edge))
+                        .append(", ");
+            }
+
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("]  ");
+        }
+
+        return  builder.toString().trim();
     }
 
     /** TODO implement JSON to string for adjlist
