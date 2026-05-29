@@ -58,11 +58,6 @@ public class DWGraph
 
         result = this.graph.add(key);
 
-        if (result)
-        {
-            this.size = this.graph.size();
-        }
-
         return result;
     }
 
@@ -79,11 +74,6 @@ public class DWGraph
         boolean result;
 
         result = this.graph.add(src, dest, weight);
-
-        if (result)
-        {
-            this.size = this.graph.size();
-        }
 
         convert();
 
@@ -102,11 +92,6 @@ public class DWGraph
 
         result = this.graph.delete(key);
 
-        if (result != null)
-        {
-            this.size = this.graph.size();
-        }
-
         convert();
 
         return result;
@@ -124,11 +109,6 @@ public class DWGraph
         Double result;
 
         result = this.graph.delete(src, dest);
-
-        if (result != null)
-        {
-            this.size = this.graph.size();
-        }
 
         convert();
 

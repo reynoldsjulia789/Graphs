@@ -309,7 +309,7 @@ public class AdjList implements Digraph
         ArrayList<String> nodes, edges;
         StringBuilder     builder;
 
-        builder = new StringBuilder("AdjList | ");
+        builder = new StringBuilder();
         nodes   = nodes();
 
         for (String node : nodes)
