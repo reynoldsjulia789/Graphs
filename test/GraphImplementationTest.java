@@ -7,22 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GraphImplementationTest
 {
     @Nested
-    @DisplayName("Digraph Tests")
-    class Digraph
+    @DisplayName("DW Graph Tests")
+    class DWGraphTests
     {
 
     }
 
     @Nested
     @DisplayName("Adjacency List Tests")
-    class AdjList
+    class AdjListTests
     {
 
     }
 
     @Nested
     @DisplayName("Adjacency Matrix Tests")
-    class AdjMatrix
+    class AdjMatrixTests
     {
 
     }

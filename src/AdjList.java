@@ -299,7 +299,7 @@ public class AdjList implements Digraph
     }
 
     /**
-     * A human-readable String representation of the graph
+     * A human-readable String representation of the graph TODO: (Can this just be the json?)
      *
      * @return String representing the graph
      */
@@ -335,7 +335,7 @@ public class AdjList implements Digraph
     }
 
     /**
-     * A JSON serialization of the graph
+     * A JSON serialization of the graph TODO: Can I move this to the interface, do I include the tabs and newlines?
      *
      * @return JSON String with the graph contents
      */

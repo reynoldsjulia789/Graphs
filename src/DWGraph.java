@@ -15,7 +15,7 @@ import java.util.Scanner;
  *      graph, when to switch, how to set up the graph, and everything else.
  */
 
-/**
+/** TODO: Should I move all methods that are the same between DWGraph, DUGraph, UUGraph, and UWGraph to an abstract Graph class and have these inherit them and only implement the methods that are different
  * Directed Weighted Graph
  */
 public class DWGraph
@@ -31,7 +31,6 @@ public class DWGraph
     public DWGraph()
     {
         this.graph = new AdjList();
-        this.size  = 0;
         this.mtxThreshold = 0.5;
         this.lstThreshold = 0.25;
     }
@@ -57,15 +56,41 @@ public class DWGraph
     }
 
     /**
-     * Parses the nodes and edges from the JSON and creates a graph from it.
+     * Parses the nodes and edges from the JSON and adds them to the current graph
      *
      * @param JSON String with the contents of the JSON file
      */
-    private void parseJSON(final String JSON)
+    private void parseJSON(String JSON)
     {
+        String            node;
+        String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
         ArrayList<String> nodes;
 
+        JSON = JSON.trim();
 
+        if (JSON.startsWith("{") && JSON.endsWith("}"))
+        {
+            JSON = JSON.substring(1, JSON.length() - 1).trim();
+        }
+
+        JSON = JSON.replaceAll("\\s+", "")
+                   .replaceAll("\"", "");      // remove all whitespace and "
+
+        nodeChunks = JSON.split("},");
+
+        for (String nodeChunk : nodeChunks)
+        {
+            nodeAndEdges = nodeChunk.split("[:{]");
+            node         = nodeAndEdges[0];
+            edges        = nodeAndEdges[1].split(",");
+
+            for (String edge : edges)
+            {
+                edgeAndWeight = edge.split(":");
+
+                add(node, edgeAndWeight[0], Double.parseDouble(edgeAndWeight[1]));
+            }
+        }
     }
 
     /**
@@ -82,7 +107,7 @@ public class DWGraph
 
         while (fileReader.hasNext())
         {
-            builder.append(fileReader.nextLine().trim());
+            builder.append(fileReader.nextLine());
         }
 
         return builder.toString();
@@ -242,7 +267,7 @@ public class DWGraph
     }
 
     /**
-     * Populates graph from a JSON file
+     * Populates current graph from a JSON file?
      *
      * @param filepath the path to the JSON file
      * @return the created DWGraph
