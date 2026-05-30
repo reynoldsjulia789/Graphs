@@ -238,7 +238,6 @@ public class DWGraph extends Graph
     {
         String            node;
         String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
-        ArrayList<String> nodes;
 
         JSON = jsonTrimmer(JSON);
 
