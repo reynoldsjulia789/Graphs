@@ -15,7 +15,7 @@ import java.util.Scanner;
  *      graph, when to switch, how to set up the graph, and everything else.
  */
 
-/** TODO: Should I move all methods that are the same between DWGraph, DUGraph, UUGraph, and UWGraph to an abstract Graph class and have these inherit them and only implement the methods that are different
+/**
  * Directed Weighted Graph
  */
 public class DWGraph extends Graph
@@ -42,75 +42,13 @@ public class DWGraph extends Graph
      */
     public DWGraph(String filepath)
     {
+        DWGraph graph;
+
         this();
 
-        try (Scanner fileReader = new Scanner(new File(filepath)))
-        {
-            parseJSON(readJSON(fileReader));
-        }
-        catch (FileNotFoundException caught)
-        {
-            System.out.println("DWGraph - An error occurred when attempting to read the file:  "
-                    + caught.getMessage());
-        }
-    }
+        graph = load(filepath);
 
-    /**
-     * Parses the nodes and edges from the JSON and adds them to the current graph
-     *
-     * @param JSON String with the contents of the JSON file
-     */
-    private void parseJSON(String JSON)
-    {
-        String            node;
-        String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
-        ArrayList<String> nodes;
-
-        JSON = jsonTrimmer(JSON);
-
-        nodeChunks = JSON.split("},");
-
-        for (String nodeChunk : nodeChunks)
-        {
-            nodeAndEdges = nodeChunk.split("[{]");
-            node         = jsonTrimmer(nodeAndEdges[0].replace(":", ""));
-            edges        = nodeAndEdges[1].split(",");
-
-            for (String edge : edges)
-            {
-                edgeAndWeight = edge.split(":");
-
-                add(node, jsonTrimmer(edgeAndWeight[0]), Double.parseDouble(edgeAndWeight[1].trim()));
-            }
-        }
-    }
-
-    private String jsonTrimmer(String jsonSubstring)
-    {
-        jsonSubstring = jsonSubstring.trim()
-                .substring(1, jsonSubstring.length() - 1);
-
-        return jsonSubstring;
-    }
-
-    /**
-     * Reads a JSON file into a String.
-     *
-     * @param fileReader Scanner object wrapped around a file to be read
-     * @return String holding the contents of the JSON
-     */
-    private String readJSON(Scanner fileReader)
-    {
-        StringBuilder builder;
-
-        builder = new StringBuilder();
-
-        while (fileReader.hasNext())
-        {
-            builder.append(fileReader.nextLine());
-        }
-
-        return builder.toString();
+        this.graph = graph.graph;
     }
 
     /**
@@ -274,7 +212,79 @@ public class DWGraph extends Graph
      */
     public static DWGraph load(String filepath)
     {
-        return new DWGraph(filepath); // TODO is this valid???
+        DWGraph graph;
+
+        graph = new DWGraph();
+
+        try (Scanner fileReader = new Scanner(new File(filepath)))
+        {
+            parseJSON(readJSON(fileReader), graph);
+        }
+        catch (FileNotFoundException caught)
+        {
+            System.out.println("DWGraph - An error occurred when attempting to read the file:  "
+                    + caught.getMessage());
+        }
+
+        return graph;
+    }
+
+    /**
+     * Parses the nodes and edges from the JSON and adds them to the current graph
+     *
+     * @param JSON String with the contents of the JSON file
+     */
+    private static void parseJSON(String JSON, DWGraph graph)
+    {
+        String            node;
+        String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
+        ArrayList<String> nodes;
+
+        JSON = jsonTrimmer(JSON);
+
+        nodeChunks = JSON.split("},");
+
+        for (String nodeChunk : nodeChunks)
+        {
+            nodeAndEdges = nodeChunk.split("\\{");
+            node         = jsonTrimmer(nodeAndEdges[0].replace(":", ""));
+            edges        = nodeAndEdges[1].split(",");
+
+            for (String edge : edges)
+            {
+                edgeAndWeight = edge.split(":");
+
+                graph.add(node, jsonTrimmer(edgeAndWeight[0]), Double.parseDouble(edgeAndWeight[1].trim()));
+            }
+        }
+    }
+
+    private static String jsonTrimmer(String jsonSubstring)
+    {
+        jsonSubstring = jsonSubstring.trim()
+                .substring(1, jsonSubstring.length() - 1);
+
+        return jsonSubstring;
+    }
+
+    /**
+     * Reads a JSON file into a String.
+     *
+     * @param fileReader Scanner object wrapped around a file to be read
+     * @return String holding the contents of the JSON
+     */
+    private static String readJSON(Scanner fileReader)
+    {
+        StringBuilder builder;
+
+        builder = new StringBuilder();
+
+        while (fileReader.hasNext())
+        {
+            builder.append(fileReader.nextLine());
+        }
+
+        return builder.toString();
     }
 
     /**
