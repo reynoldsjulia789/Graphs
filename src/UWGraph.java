@@ -3,6 +3,8 @@
  * To explore the differences in implementation between a directed weighted graph and an undirected weighted one.
  *
  * How did you manipulate the inputs into the Digraph to achieve the implementation?
+ * Main change I made was adding an edge between the src node and destination as well as the dest node and src node
+ * on the add (deleting both on delete as well).
  *
  * Did you change your thresholds or algorithm for converting between a matrix and a list? If so, why?
  * I did not change my thresholds.
