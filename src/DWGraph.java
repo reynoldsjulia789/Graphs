@@ -18,7 +18,7 @@ import java.util.Scanner;
 /** TODO: Should I move all methods that are the same between DWGraph, DUGraph, UUGraph, and UWGraph to an abstract Graph class and have these inherit them and only implement the methods that are different
  * Directed Weighted Graph
  */
-public class DWGraph
+public class DWGraph extends Graph
 {
     private Digraph graph;
     private int     size;           // I would like to remove this as it is unnecessary, but it is in the assigment requirements...
@@ -66,31 +66,31 @@ public class DWGraph
         String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
         ArrayList<String> nodes;
 
-        JSON = JSON.trim();
-
-        if (JSON.startsWith("{") && JSON.endsWith("}"))
-        {
-            JSON = JSON.substring(1, JSON.length() - 1).trim();
-        }
-
-        JSON = JSON.replaceAll("\\s+", "")
-                   .replaceAll("\"", "");      // remove all whitespace and "
+        JSON = jsonTrimmer(JSON);
 
         nodeChunks = JSON.split("},");
 
         for (String nodeChunk : nodeChunks)
         {
-            nodeAndEdges = nodeChunk.split("[:{]");
-            node         = nodeAndEdges[0];
+            nodeAndEdges = nodeChunk.split("[{]");
+            node         = jsonTrimmer(nodeAndEdges[0].replace(":", ""));
             edges        = nodeAndEdges[1].split(",");
 
             for (String edge : edges)
             {
                 edgeAndWeight = edge.split(":");
 
-                add(node, edgeAndWeight[0], Double.parseDouble(edgeAndWeight[1]));
+                add(node, jsonTrimmer(edgeAndWeight[0]), Double.parseDouble(edgeAndWeight[1].trim()));
             }
         }
+    }
+
+    private String jsonTrimmer(String jsonSubstring)
+    {
+        jsonSubstring = jsonSubstring.trim()
+                .substring(1, jsonSubstring.length() - 1);
+
+        return jsonSubstring;
     }
 
     /**
