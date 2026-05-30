@@ -21,6 +21,21 @@ public class GraphImplementationTest
             test = new DWGraph("jsonSamples/16-node-disjoint.json");
 
             assertEquals(16, test.size(), "Graph size");
+
+            System.out.println(test.toJSON());
+        }
+
+        @Test
+        @DisplayName("Loads Graph From Other File")
+        public void loadGraph2()
+        {
+            DWGraph test;
+
+            test = new DWGraph("jsonSamples/16-node-sample.json");
+
+            assertEquals(16, test.size(), "Graph size");
+
+            System.out.println(test.toJSON());
         }
     }
 

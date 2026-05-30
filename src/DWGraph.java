@@ -243,6 +243,8 @@ public class DWGraph extends Graph
 
         nodeChunks = JSON.split("},");
 
+        nodeChunks[(nodeChunks.length - 1)] = nodeChunks[(nodeChunks.length - 1)].replace("}", "");
+
         for (String nodeChunk : nodeChunks)
         {
             nodeAndEdges = nodeChunk.split("\\{");
@@ -264,8 +266,8 @@ public class DWGraph extends Graph
 
     private static String jsonTrimmer(String jsonSubstring)
     {
-        jsonSubstring = jsonSubstring.trim()
-                .substring(1, jsonSubstring.length() - 1);
+        jsonSubstring = jsonSubstring.trim();
+        jsonSubstring = jsonSubstring.substring(1, jsonSubstring.length() - 1);
 
         return jsonSubstring;
     }
