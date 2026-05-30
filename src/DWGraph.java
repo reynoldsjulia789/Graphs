@@ -18,7 +18,7 @@ import java.util.Scanner;
 /**
  * Directed Weighted Graph
  */
-public class DWGraph
+public class DWGraph extends Graph
 {
     private Digraph graph;
     private int     size;           // I would like to remove this as it is unnecessary, but it is in the assigment requirements...

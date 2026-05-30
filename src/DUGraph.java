@@ -19,7 +19,7 @@ import java.util.Scanner;
 /**
  * Directed Unweighted Graph
  */
-public class DUGraph
+public class DUGraph extends Graph
 {
     private Digraph graph;
     private double  edgeExists;

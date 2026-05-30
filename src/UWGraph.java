@@ -18,7 +18,7 @@ import java.util.Scanner;
 /**
  * Undirected Weighted Graph
  */
-public class UWGraph
+public class UWGraph extends Graph
 {
     private Digraph graph;
     private double  mtxThreshold;   // matrix threshold

@@ -20,7 +20,7 @@ import java.util.Scanner;
 /**
  * Undirected Unweighted Graph
  */
-public class UUGraph
+public class UUGraph extends Graph
 {
     private Digraph graph;
     private double  edgeExists;
