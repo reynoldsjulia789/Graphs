@@ -106,43 +106,5 @@ public interface Digraph
      */
     String toString();
 
-    /**
-     * A JSON serialization of the graph
-     *
-     * @return JSON String with the graph contents
-     */
-    default String toJSON()
-    {
-        ArrayList<String> nodes, edges;
-        StringBuilder     builder;
-
-        builder = new StringBuilder("{");
-        nodes   = nodes();
-
-        for (String node : nodes)
-        {
-            edges = edges(node);
-
-            builder.append("\n\t\"")
-                    .append(node)
-                    .append("\" : {");
-
-            for (String edge : edges)
-            {
-                builder.append("\n\t\t\"")
-                        .append(edge)
-                        .append("\" : ")
-                        .append(weight(node, edge))
-                        .append(",");
-            }
-
-            builder.deleteCharAt(builder.length() - 1)
-                    .append("\n\t},");
-        }
-
-        builder.deleteCharAt(builder.length() - 1)
-                .append("\n}");
-
-        return  builder.toString();
-    }
+    // toJSON was moved to Graph classes
 }

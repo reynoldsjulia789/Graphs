@@ -18,7 +18,7 @@ import java.util.Scanner;
 /**
  * Directed Weighted Graph
  */
-public class DWGraph extends Graph
+public class DWGraph
 {
     private Digraph graph;
     private int     size;           // I would like to remove this as it is unnecessary, but it is in the assigment requirements...
@@ -154,7 +154,8 @@ public class DWGraph extends Graph
     }
 
     /**
-     * Calculates the unweighted density of the entire graph
+     * Calculates the unweighted density of the entire graph.
+     * Self-edges aren't counted for the total possible edges, so a graph with self edges will have a density above 1
      *
      * @return the density of the graph
      */
@@ -201,7 +202,37 @@ public class DWGraph extends Graph
      */
     public String toJSON()
     {
-        return this.graph.toJSON();
+        ArrayList<String> nodes, edges;
+        StringBuilder     builder;
+
+        builder = new StringBuilder("{");
+        nodes   = nodes();
+
+        for (String node : nodes)
+        {
+            edges = edges(node);
+
+            builder.append("\n\t\"")
+                    .append(node)
+                    .append("\" : {");
+
+            for (String edge : edges)
+            {
+                builder.append("\n\t\t\"")
+                        .append(edge)
+                        .append("\" : ")
+                        .append(weight(node, edge))
+                        .append(",");
+            }
+
+            builder.deleteCharAt(builder.length() - 1)
+                    .append("\n\t},");
+        }
+
+        builder.deleteCharAt(builder.length() - 1)
+                .append("\n}");
+
+        return  builder.toString();
     }
 
     /**
@@ -264,6 +295,12 @@ public class DWGraph extends Graph
         }
     }
 
+    /**
+     * Trims and removes the outer characters from the jsonSubstring
+     *
+     * @param jsonSubstring substring of the JSON file
+     * @return trimmed string
+     */
     private static String jsonTrimmer(String jsonSubstring)
     {
         jsonSubstring = jsonSubstring.trim();
