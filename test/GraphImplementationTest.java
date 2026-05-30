@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GraphImplementationTest
 {
     @Nested
-    @DisplayName("DW Graph Tests")
-    class DWGraphTests
+    @DisplayName("Graph Tests")
+    class GraphTests
     {
         @Test
         @DisplayName("Loads Graph From File")
@@ -32,6 +32,45 @@ public class GraphImplementationTest
             DWGraph test;
 
             test = new DWGraph("jsonSamples/16-node-sample.json");
+
+            assertEquals(16, test.size(), "Graph size");
+
+            System.out.println(test.toJSON());
+        }
+
+        @Test
+        @DisplayName("Loads DUGraph From File")
+        public void loadDUGraph()
+        {
+            DUGraph test;
+
+            test = new DUGraph("jsonSamples/16-node-disjoint.json");
+
+            assertEquals(16, test.size(), "Graph size");
+
+            System.out.println(test.toJSON());
+        }
+
+        @Test
+        @DisplayName("Loads UWGraph From File")
+        public void loadUWGraph()
+        {
+            UWGraph test;
+
+            test = new UWGraph("jsonSamples/16-node-disjoint.json");
+
+            assertEquals(16, test.size(), "Graph size");
+
+            System.out.println(test.toJSON());
+        }
+
+        @Test
+        @DisplayName("Loads UUGraph From File")
+        public void loadUUGraph()
+        {
+            UUGraph test;
+
+            test = new UUGraph("jsonSamples/16-node-disjoint.json");
 
             assertEquals(16, test.size(), "Graph size");
 

@@ -220,7 +220,7 @@ public class DUGraph
             {
                 builder.append("\n\t\t\"")
                         .append(edge)
-                        .append(",");
+                        .append("\",");
             }
 
             builder.deleteCharAt(builder.length() - 1)

@@ -299,7 +299,7 @@ public class AdjList implements Digraph
     }
 
     /**
-     * A human-readable String representation of the graph TODO: (Can this just be the json?)
+     * A human-readable String representation of the graph
      *
      * @return String representing the graph
      */

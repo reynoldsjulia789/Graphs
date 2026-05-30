@@ -335,7 +335,6 @@ public class AdjMatrix implements Digraph
     }
 
     /**
-     * TODO is there a better way/faster way to do this?
      * Returns the key associated with the specified index in the 2D weights array.
      *
      * @param idx the index of the array to get the associated key for

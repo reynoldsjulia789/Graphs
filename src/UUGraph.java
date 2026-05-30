@@ -223,7 +223,7 @@ public class UUGraph
             {
                 builder.append("\n\t\t\"")
                         .append(edge)
-                        .append(",");
+                        .append("\",");
             }
 
             builder.deleteCharAt(builder.length() - 1)
