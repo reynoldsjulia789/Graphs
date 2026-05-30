@@ -248,13 +248,17 @@ public class DWGraph extends Graph
         {
             nodeAndEdges = nodeChunk.split("\\{");
             node         = jsonTrimmer(nodeAndEdges[0].replace(":", ""));
-            edges        = nodeAndEdges[1].split(",");
 
-            for (String edge : edges)
+            if (nodeAndEdges.length > 1)
             {
-                edgeAndWeight = edge.split(":");
+                edges = nodeAndEdges[1].split(",");
 
-                graph.add(node, jsonTrimmer(edgeAndWeight[0]), Double.parseDouble(edgeAndWeight[1].trim()));
+                for (String edge : edges)
+                {
+                    edgeAndWeight = edge.split(":");
+
+                    graph.add(node, jsonTrimmer(edgeAndWeight[0]), Double.parseDouble(edgeAndWeight[1].trim()));
+                }
             }
         }
     }
