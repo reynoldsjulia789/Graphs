@@ -122,12 +122,7 @@ public class AdjList implements Digraph
     @Override
     public String delete(String key)
     {
-        if (key == null)
-        {
-            return null;
-        }
-
-        if (!this.connections.containsKey(key))
+        if (key == null || !this.connections.containsKey(key))
         {
             return null;
         }
@@ -159,7 +154,7 @@ public class AdjList implements Digraph
     {
         HashMap<String, Double> srcEdges;
 
-        if ((src == null) || (dest == null))
+        if ((src == null) || (dest == null) || !this.connections.containsKey(src))
         {
             return null;
         }

@@ -137,7 +137,7 @@ public class AdjMatrix implements Digraph
     {
         int idx, nodeLocation;
 
-        if (key == null)
+        if (key == null || !this.keyMap.containsKey(key))
         {
             return null;
         }
@@ -173,7 +173,7 @@ public class AdjMatrix implements Digraph
         int    srcNode, destNode;
         Double deletedWeight;
 
-        if (src == null || dest == null)
+        if (src == null || dest == null || !this.keyMap.containsKey(src) || !this.keyMap.containsKey(dest))
         {
             return null;
         }
@@ -371,7 +371,7 @@ public class AdjMatrix implements Digraph
     {
         int srcNode, destNode;
 
-        if (src == null || dest == null)
+        if (src == null || dest == null || !this.keyMap.containsKey(src) || !this.keyMap.containsKey(dest))
         {
             return null;
         }
