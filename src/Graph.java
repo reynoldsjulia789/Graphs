@@ -7,9 +7,9 @@ import java.util.Scanner;
 public abstract class Graph
 {
     protected Digraph graph;
-    private double    mtxThreshold;   // matrix threshold
-    private double    lstThreshold;   // list threshold
-    private boolean   weighted;
+    private   double  mtxThreshold;   // matrix threshold
+    private   double  lstThreshold;   // list threshold
+    private   boolean weighted;
 
     /**
      * Constructor for abstract Graph class.
@@ -184,7 +184,7 @@ public abstract class Graph
      *
      * @param JSON String with the contents of the JSON file
      */
-    private static void parseJSON(String JSON, DWGraph graph)
+    protected static void parseJSON(String JSON, Graph graph)
     {
         String            node;
         String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
@@ -234,7 +234,7 @@ public abstract class Graph
      * @param fileReader Scanner object wrapped around a file to be read
      * @return String holding the contents of the JSON
      */
-    private static String readJSON(Scanner fileReader)
+    protected static String readJSON(Scanner fileReader)
     {
         StringBuilder builder;
 
@@ -251,7 +251,7 @@ public abstract class Graph
     /**
      * Swaps between adjacency list & adjacency matrix depending on graph density
      */
-    private void convert()
+    protected void convert()
     {
         double density;
 
