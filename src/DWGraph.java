@@ -21,7 +21,6 @@ import java.util.Scanner;
 public class DWGraph extends Graph
 {
     private Digraph graph;
-    private int     size;           // I would like to remove this as it is unnecessary, but it is in the assigment requirements...
     private double  mtxThreshold;   // matrix threshold
     private double  lstThreshold;   // list threshold
 
