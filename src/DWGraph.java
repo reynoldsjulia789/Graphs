@@ -52,6 +52,7 @@ public class DWGraph extends Graph
      * @param weight the weight of the edge
      * @return true if added, false if edge is already in the graph
      */
+    @Override
     public boolean add(String src, String dest, Double weight)
     {
         boolean result;

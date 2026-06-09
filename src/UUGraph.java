@@ -124,4 +124,39 @@ public class UUGraph extends Graph
 
         return graph;
     }
+
+    /**
+     * Parses the nodes and edges from the JSON and adds them to the current graph
+     *
+     * @param JSON String with the contents of the JSON file
+     */
+    private static void parseJSON(String JSON, UUGraph graph)
+    {
+        String            node;
+        String[]          nodeChunks, nodeAndEdges, edges, edgeAndWeight;
+
+        JSON = jsonTrimmer(JSON);
+
+        nodeChunks = JSON.split("},");
+
+        nodeChunks[(nodeChunks.length - 1)] = nodeChunks[(nodeChunks.length - 1)].replace("}", "");
+
+        for (String nodeChunk : nodeChunks)
+        {
+            nodeAndEdges = nodeChunk.split("\\{");
+            node         = jsonTrimmer(nodeAndEdges[0].replace(":", ""));
+
+            if (nodeAndEdges.length > 1)
+            {
+                edges = nodeAndEdges[1].split(",");
+
+                for (String edge : edges)
+                {
+                    edgeAndWeight = edge.split(":");
+
+                    graph.add(node, jsonTrimmer(edgeAndWeight[0]));
+                }
+            }
+        }
+    }
 }
