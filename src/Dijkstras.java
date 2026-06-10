@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 /**
@@ -60,7 +59,7 @@ public class Dijkstras implements Search
         }
 
         return nodeMap;
-    }
+    } // end of setup
 
     /**
      * Finds the shortest path from the source to the destination.
@@ -77,7 +76,9 @@ public class Dijkstras implements Search
         PriorityQueue<Node>   unknownNodes;
         HashMap<String, Node> nodeMap;
         Node                  curr, source, lowestCost;
+        String[]              path;
         double                cost;
+        int                   idx;
 
         if (src == null || dest == null || graph == null)
         {
@@ -105,7 +106,18 @@ public class Dijkstras implements Search
 
             if (lowestCost.name.equals(dest))
             {
-                return assemblePath(lowestCost);
+                path = new String[lowestCost.nodesInPath];
+
+                curr = lowestCost;
+                idx  = lowestCost.nodesInPath - 1;
+
+                while (curr != null)
+                {
+                    path[idx] = curr.name;
+                    curr      = curr.backtrace;
+                }
+
+                return new Path(src, dest, lowestCost.cost, graph, path);
             }
 
             for (String edge : graph.edges(lowestCost.name))
@@ -118,8 +130,10 @@ public class Dijkstras implements Search
 
                     if (cost < curr.cost)
                     {
-                        curr.cost      = cost;
-                        curr.backtrace = lowestCost;
+                        curr.cost        = cost;
+                        curr.backtrace   = lowestCost;
+                        curr.nodesInPath = lowestCost.nodesInPath + 1;
+
                         unknownNodes.add(curr);
                     }
                 }
@@ -127,6 +141,17 @@ public class Dijkstras implements Search
         }
 
         return null;
+    } // end of search
+
+    /**
+     * String representing Dijkstra's class
+     *
+     * @return String
+     */
+    @Override
+    public String toString()
+    {
+        return "Dijkstra's Shortest Path Finder";
     }
 
     /**
@@ -137,6 +162,7 @@ public class Dijkstras implements Search
         private final String            name;
         private double                  cost;
         private Node                    backtrace;
+        private int                     nodesInPath;
 
         /**
          * Constructor for Node class
@@ -144,9 +170,10 @@ public class Dijkstras implements Search
          */
         private Node(String name)
         {
-            this.name      = name;
-            this.cost      = Integer.MAX_VALUE;
-            this.backtrace = null;
+            this.name        = name;
+            this.cost        = Integer.MAX_VALUE;
+            this.backtrace   = null;
+            this.nodesInPath = 1;
         }
 
         /**
@@ -158,5 +185,32 @@ public class Dijkstras implements Search
         {
             return Double.compare(this.cost, other.cost);
         }
-    }
+
+        /**
+         * String representing node
+         *
+         * @return node, cost, and backtrace node (if exists)
+         */
+        @Override
+        public String toString()
+        {
+            StringBuilder builder;
+
+            builder = new StringBuilder();
+
+            builder.append("\"")
+                    .append(this.name)
+                    .append("\" : ")
+                    .append(this.cost);
+
+            if (this.backtrace != null)
+            {
+                builder.append(" -> \"")
+                        .append(this.backtrace.name)
+                        .append("\"");
+            }
+
+            return builder.toString();
+        }
+    } // end of inner Node class
 }
