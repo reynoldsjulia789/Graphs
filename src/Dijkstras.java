@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 /**
@@ -7,35 +9,63 @@ import java.util.PriorityQueue;
  */
 public class Dijkstras implements Search
 {
+    /**
+     * Constructor
+     */
     public Dijkstras()
     {
         // do nothing
     }
 
+    /**
+     * Finds the shortest path from the source to the destination.
+     *
+     * @param src the source node
+     * @param dest the destination node
+     * @param graph the graph the nodes are in
+     * @return a record containing information about the shortest path, or null if src or dest don't exist in
+     * the graph or there is no path
+     */
     public Path search(String src, String dest, Digraph graph)
     {
-        PriorityQueue<Node>   q;
-        ArrayList<String>     nodes, edges;
-        Node                  n;
+        PriorityQueue<Node>   unknownNodes;
+        ArrayList<Node>       knownNodes;
+        ArrayList<String>     edges;
+        Node                  curr, source, node;
 
-        nodes = graph.nodes();
-        q     = new PriorityQueue<>();
-
-        // For each node v != source,
-        for (String node : nodes)
+        if (src == null || dest == null || graph == null)
         {
-            n = new Node(node); // set v.cost = infinity and v.known = false
-
-            // set source.cost = 0 and source.known = true
-            if (node.equals(src))
-            {
-                n.cost  = 0;
-                n.known = true;
-            }
-
-            q.add(n);
+            return null;
         }
 
+        source = findSource(graph.nodes(), src, dest);
+
+        if ((source == null))
+        {
+            return null;
+        }
+
+        unknownNodes = new PriorityQueue<>();
+
+        unknownNodes.add(source);
+
+        while (!unknownNodes.isEmpty())
+        {
+            curr = unknownNodes.poll();
+
+            edges = graph.edges(curr.name);
+
+            for (String edge : edges)
+            {
+                node = unknownNodes.
+
+                unknownNodes.add()
+            }
+        }
+
+        // For each node v != source,
+        // set v.cost = infinity and v.known = false
+        // set source.cost = 0 and source.known = true
         // while there are unknown nodes in the graph
         // select the unknown node v with the lowest cost
         // mark v as known
@@ -47,19 +77,70 @@ public class Dijkstras implements Search
         // u.path = v
     }
 
+    /**
+     * Verifies that the source node and destination node exist in the list of the graph's nodes
+     *
+     * @param nodes the nodes in the graph
+     * @param src the source node
+     * @param dest the destination node
+     * @return a Node - the source node if src and dest were found, null if not
+     */
+    private Node findSource(ArrayList<String> nodes, String src, String dest)
+    {
+        int  count;
+        Node source;
 
+        count      = 0;
+        source     = null;
+
+        for (String node : nodes)
+        {
+            if (node.equals(src))
+            {
+                source       = new Node(node);
+                source.cost  = 0;
+
+                count++;
+            }
+
+            if (node.equals(dest))
+            {
+                count++;
+            }
+
+            if (count == 2)
+            {
+                break;
+            }
+        }
+
+        if ((source == null) || (count != 2))
+        {
+            return null;
+        }
+
+        return source;
+    }
+
+
+    /**
+     * Inner node class to store info about each node in the graph
+     */
     private class Node implements Comparable<Node>
     {
-        private String  name;
-        private boolean known;
-        private int     cost;
-        private Node    backtrace;
+        private final String            name;
+        private int                     cost;
+        private Node                    Backtrace;
 
+        /**
+         * Constructor for Node class
+         * @param name The name of the node
+         */
         private Node(String name)
         {
-            this.name  = name;
-            this.cost  = Integer.MAX_VALUE;
-            this.known = false;
+            this.name      = name;
+            this.cost      = Integer.MAX_VALUE;
+            this.Backtrace = null;
         }
 
         /**
@@ -69,7 +150,7 @@ public class Dijkstras implements Search
         @Override
         public int compareTo(Node other)
         {
-            return this.cost - other.cost;
+            return Integer.compare(this.cost, other.cost);
         }
     }
 }
