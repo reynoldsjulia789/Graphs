@@ -426,14 +426,12 @@ public class DWGraph extends Graph
     public Search.Path search(String src, String dest)
     {
         Search.Path results;
-        Double weight;
+        Double      weight;
 
         if (src == null || dest == null)
         {
             return null;
         }
-
-        updateSearchMethod(src, dest);
 
         if (src.equals("<ALL>") && dest.equals("<ALL>"))
         {

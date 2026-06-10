@@ -9,17 +9,33 @@ public class Dijkstras implements Search
 {
     public Dijkstras()
     {
-        // do nothing???
+        // do nothing
     }
 
-    public static Path search(String src, String dest, Digraph graph)
+    public Path search(String src, String dest, Digraph graph)
     {
-        PriorityQueue<Vertex> q;
+        PriorityQueue<Node>   q;
         ArrayList<String>     nodes, edges;
+        Node                  n;
+
+        nodes = graph.nodes();
+        q     = new PriorityQueue<>();
 
         // For each node v != source,
-        // set v.cost = infinity and v.known = false
-        // set source.cost = 0 and source.known = true
+        for (String node : nodes)
+        {
+            n = new Node(node); // set v.cost = infinity and v.known = false
+
+            // set source.cost = 0 and source.known = true
+            if (node.equals(src))
+            {
+                n.cost  = 0;
+                n.known = true;
+            }
+
+            q.add(n);
+        }
+
         // while there are unknown nodes in the graph
         // select the unknown node v with the lowest cost
         // mark v as known
@@ -32,16 +48,18 @@ public class Dijkstras implements Search
     }
 
 
-    private class Vertex implements Comparable<Vertex>
+    private class Node implements Comparable<Node>
     {
         private String  name;
         private boolean known;
-        private Integer cost;
-        private Vertex  backtrace;
+        private int     cost;
+        private Node    backtrace;
 
-        private Vertex(String name)
+        private Node(String name)
         {
-            this.name = name;
+            this.name  = name;
+            this.cost  = Integer.MAX_VALUE;
+            this.known = false;
         }
 
         /**
@@ -49,7 +67,7 @@ public class Dijkstras implements Search
          * @return int representing ordering
          */
         @Override
-        public int compareTo(Vertex other)
+        public int compareTo(Node other)
         {
             return this.cost - other.cost;
         }
