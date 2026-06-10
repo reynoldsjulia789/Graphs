@@ -17,45 +17,23 @@ public class Dijkstras implements Search
     }
 
     /**
-     * Verifies that the source node and destination node exist in the list of the graph's nodes
-     * and puts all nodes into a hashmap
+     * Puts all nodes of the graph into a hashmap
      *
      * @param nodes the nodes in the graph
-     * @param src the source node
-     * @param dest the destination node
-     * @return a map of nodes if src and dest were found, null if not
+     * @return a map of nodes in graph
      */
-    private HashMap<String, Node> setup(ArrayList<String> nodes, String src, String dest)
+    private HashMap<String, Node> setup(ArrayList<String> nodes)
     {
-        int                   count;
         Node                  curr;
         HashMap<String, Node> nodeMap;
 
         nodeMap = new HashMap<>();
-        count   = 0;
 
         for (String node : nodes)
         {
             curr = new Node(node);
 
-            if (node.equals(src))
-            {
-                curr.cost  = 0;
-
-                count++;
-            }
-
-            if (node.equals(dest))
-            {
-                count++;
-            }
-
             nodeMap.put(node, curr);
-        }
-
-        if (count != 2)
-        {
-            return null;
         }
 
         return nodeMap;
@@ -76,18 +54,16 @@ public class Dijkstras implements Search
         PriorityQueue<Node>   unknownNodes;
         HashMap<String, Node> nodeMap;
         Node                  curr, source, lowestCost;
-        String[]              path;
         double                cost;
-        int                   idx;
 
         if (src == null || dest == null || graph == null)
         {
             return null;
         }
 
-        nodeMap = setup(graph.nodes(), src, dest);
+        nodeMap = setup(graph.nodes());
 
-        if ((nodeMap == null))
+        if (nodeMap.isEmpty() || !nodeMap.containsKey(src) || !nodeMap.containsKey(dest))
         {
             return null;
         }
@@ -95,29 +71,24 @@ public class Dijkstras implements Search
         unknownNodes = new PriorityQueue<>();
         knownNodes   = new ArrayList<>();
         source       = nodeMap.get(src);
+        source.cost  = 0;
 
         unknownNodes.add(source);
 
-        while (!unknownNodes.isEmpty())
+        while (true)
         {
             lowestCost = unknownNodes.poll();
+
+            if (lowestCost == null)
+            {
+                break;
+            }
 
             knownNodes.add(lowestCost.name);
 
             if (lowestCost.name.equals(dest))
             {
-                path = new String[lowestCost.nodesInPath];
-
-                curr = lowestCost;
-                idx  = lowestCost.nodesInPath - 1;
-
-                while (curr != null)
-                {
-                    path[idx] = curr.name;
-                    curr      = curr.backtrace;
-                }
-
-                return new Path(src, dest, lowestCost.cost, graph, path);
+                return new Path(src, dest, lowestCost.cost, graph, assemblePath(lowestCost));
             }
 
             for (String edge : graph.edges(lowestCost.name))
@@ -142,6 +113,32 @@ public class Dijkstras implements Search
 
         return null;
     } // end of search
+
+    /**
+     * Assembles a String[] depicting the shortest path from source to destination.
+     *
+     * @param dest the destination node
+     * @return String[] with the vertices of the path in order from source to destination.
+     */
+    private String[] assemblePath(Node dest)
+    {
+        int      idx;
+        String[] path;
+        Node     curr;
+
+        path = new String[dest.nodesInPath];
+
+        curr = dest;
+        idx  = dest.nodesInPath - 1;
+
+        while (curr != null)
+        {
+            path[idx] = curr.name;
+            curr      = curr.backtrace;
+        }
+
+        return path;
+    }
 
     /**
      * String representing Dijkstra's class
