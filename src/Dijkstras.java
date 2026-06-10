@@ -4,11 +4,15 @@
  */
 public class Dijkstras implements Search
 {
-    Digraph graph;
-    String  src;
-    String  dest;
+    public Dijkstras()
+    {
+        // do nothing???
+    }
 
-    public static Record search()
+    public static Path search(String src, String dest, Digraph graph)
+    {
+
+    }
 
 
 }

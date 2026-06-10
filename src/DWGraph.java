@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 /*
@@ -23,15 +25,18 @@ public class DWGraph extends Graph
     private Digraph graph;
     private double  mtxThreshold;   // matrix threshold
     private double  lstThreshold;   // list threshold
+    private Search  search;
+    private HashMap<String, Integer> negativeEdges;
 
     /**
      * Constructor
      */
     public DWGraph()
     {
-        this.graph = new AdjList();
-        this.mtxThreshold = 0.5;
-        this.lstThreshold = 0.25;
+        this.graph         = new AdjList();
+        this.mtxThreshold  = 0.5;
+        this.lstThreshold  = 0.25;
+        this.negativeEdges = new HashMap<>();
     }
 
     /**
@@ -79,6 +84,11 @@ public class DWGraph extends Graph
 
         result = this.graph.add(src, dest, weight);
 
+        if (result && (weight < 0))
+        {
+            this.negativeEdges.put(src, (this.negativeEdges.get(src) + 1));
+        }
+
         convert();
 
         return result;
@@ -95,6 +105,8 @@ public class DWGraph extends Graph
         String result;
 
         result = this.graph.delete(key);
+
+        // TODO: how do you accurately track if there are still negative edges in the graph????
 
         convert();
 
@@ -113,6 +125,11 @@ public class DWGraph extends Graph
         Double result;
 
         result = this.graph.delete(src, dest);
+
+        if ((result != null) && (result < 0))
+        {
+            this.negativeEdges.put(src, (this.negativeEdges.get(src) - 1));
+        }
 
         convert();
 
@@ -383,5 +400,73 @@ public class DWGraph extends Graph
         }
 
         this.graph = newGraph;
+    }
+
+    /**
+     * Analyzes the current graph, sets the Search field to the best algorithm to handle the search query,
+     * and returns a Path representing the shortest path.
+     * .
+     * Notes:
+     * .
+     * Dijkstras (class that implements Search)
+     * Should be instantiated if src is the name of a vertex in the graph, dest is the name of a vertex in
+     * the graph, and there are no negative edge weights in the graph.
+     * .
+     * BellmanFord (class that implements Search)
+     * Should be instantiated if src is the name of a vertex in the graph, dest is the name of a vertex in
+     * the graph, and there are negative edge weights in the graph.
+     * .
+     * FloydWarshall (class that implements Search)
+     * Should be instantiated if src and dest are the exact string "<ALL>"
+     *
+     * @param src the source node in the graph
+     * @param dest the destination node in the graph
+     * @return the Shortest path, or null if invalid inputs
+     */
+    public Search.Path search(String src, String dest)
+    {
+        Search.Path results;
+        Double weight;
+
+        if (src == null || dest == null)
+        {
+            return null;
+        }
+
+        updateSearchMethod(src, dest);
+
+        if (src.equals("<ALL>") && dest.equals("<ALL>"))
+        {
+            if (!(this.search instanceof FloydWarshall))
+            {
+                this.search = new FloydWarshall();
+            }
+
+            return this.search.search();
+        }
+
+        weight = this.graph.weight(src, dest);
+
+        if (weight == null)
+        {
+            return null;
+        }
+
+        if (weight < 0)
+        {
+            if (!(this.search instanceof BellmanFord))
+            {
+                this.search = new BellmanFord();
+            }
+        }
+        else
+        {
+            if (!(this.search instanceof Dijkstras))
+            {
+                this.search = new Dijkstras();
+            }
+        }
+
+        return this.search.search();
     }
 }
