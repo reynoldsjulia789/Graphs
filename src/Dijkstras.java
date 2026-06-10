@@ -59,6 +59,8 @@ public class Dijkstras implements Search
             {
                 node = unknownNodes.
 
+                        // TODO update edge with smaller weight if exists or make new node...
+
                 unknownNodes.add()
             }
         }
