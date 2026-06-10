@@ -18,6 +18,51 @@ public class Dijkstras implements Search
     }
 
     /**
+     * Verifies that the source node and destination node exist in the list of the graph's nodes
+     * and puts all nodes into a hashmap
+     *
+     * @param nodes the nodes in the graph
+     * @param src the source node
+     * @param dest the destination node
+     * @return a map of nodes if src and dest were found, null if not
+     */
+    private HashMap<String, Node> setup(ArrayList<String> nodes, String src, String dest)
+    {
+        int                   count;
+        Node                  curr;
+        HashMap<String, Node> nodeMap;
+
+        nodeMap = new HashMap<>();
+        count   = 0;
+
+        for (String node : nodes)
+        {
+            curr = new Node(node);
+
+            if (node.equals(src))
+            {
+                curr.cost  = 0;
+
+                count++;
+            }
+
+            if (node.equals(dest))
+            {
+                count++;
+            }
+
+            nodeMap.put(node, curr);
+        }
+
+        if (count != 2)
+        {
+            return null;
+        }
+
+        return nodeMap;
+    }
+
+    /**
      * Finds the shortest path from the source to the destination.
      *
      * @param src the source node
@@ -28,102 +73,61 @@ public class Dijkstras implements Search
      */
     public Path search(String src, String dest, Digraph graph)
     {
+        ArrayList<String>     knownNodes;
         PriorityQueue<Node>   unknownNodes;
-        ArrayList<Node>       knownNodes;
-        ArrayList<String>     edges;
-        Node                  curr, source, node;
+        HashMap<String, Node> nodeMap;
+        Node                  curr, source, lowestCost;
+        double                cost;
 
         if (src == null || dest == null || graph == null)
         {
             return null;
         }
 
-        source = findSource(graph.nodes(), src, dest);
+        nodeMap = setup(graph.nodes(), src, dest);
 
-        if ((source == null))
+        if ((nodeMap == null))
         {
             return null;
         }
 
         unknownNodes = new PriorityQueue<>();
+        knownNodes   = new ArrayList<>();
+        source       = nodeMap.get(src);
 
         unknownNodes.add(source);
 
         while (!unknownNodes.isEmpty())
         {
-            curr = unknownNodes.poll();
+            lowestCost = unknownNodes.poll();
 
-            edges = graph.edges(curr.name);
+            knownNodes.add(lowestCost.name);
 
-            for (String edge : edges)
+            if (lowestCost.name.equals(dest))
             {
-                node = unknownNodes.
+                return assemblePath(lowestCost);
+            }
 
-                        // TODO update edge with smaller weight if exists or make new node...
+            for (String edge : graph.edges(lowestCost.name))
+            {
+                if (!knownNodes.contains(edge))
+                {
+                    curr = nodeMap.get(edge);
 
-                unknownNodes.add()
+                    cost = lowestCost.cost + graph.weight(lowestCost.name, edge);
+
+                    if (cost < curr.cost)
+                    {
+                        curr.cost      = cost;
+                        curr.backtrace = lowestCost;
+                        unknownNodes.add(curr);
+                    }
+                }
             }
         }
 
-        // For each node v != source,
-        // set v.cost = infinity and v.known = false
-        // set source.cost = 0 and source.known = true
-        // while there are unknown nodes in the graph
-        // select the unknown node v with the lowest cost
-        // mark v as known
-        // for each edge(v,u) with weight w,
-        // c1 = v.cost + w (cost of best path through v to u)
-        // c2 = u.cost (cost of best path to u previously known)
-        // if (c1 < c2)
-        // u.cost = c1
-        // u.path = v
+        return null;
     }
-
-    /**
-     * Verifies that the source node and destination node exist in the list of the graph's nodes
-     *
-     * @param nodes the nodes in the graph
-     * @param src the source node
-     * @param dest the destination node
-     * @return a Node - the source node if src and dest were found, null if not
-     */
-    private Node findSource(ArrayList<String> nodes, String src, String dest)
-    {
-        int  count;
-        Node source;
-
-        count      = 0;
-        source     = null;
-
-        for (String node : nodes)
-        {
-            if (node.equals(src))
-            {
-                source       = new Node(node);
-                source.cost  = 0;
-
-                count++;
-            }
-
-            if (node.equals(dest))
-            {
-                count++;
-            }
-
-            if (count == 2)
-            {
-                break;
-            }
-        }
-
-        if ((source == null) || (count != 2))
-        {
-            return null;
-        }
-
-        return source;
-    }
-
 
     /**
      * Inner node class to store info about each node in the graph
@@ -131,8 +135,8 @@ public class Dijkstras implements Search
     private class Node implements Comparable<Node>
     {
         private final String            name;
-        private int                     cost;
-        private Node                    Backtrace;
+        private double                  cost;
+        private Node                    backtrace;
 
         /**
          * Constructor for Node class
@@ -142,7 +146,7 @@ public class Dijkstras implements Search
         {
             this.name      = name;
             this.cost      = Integer.MAX_VALUE;
-            this.Backtrace = null;
+            this.backtrace = null;
         }
 
         /**
@@ -152,7 +156,7 @@ public class Dijkstras implements Search
         @Override
         public int compareTo(Node other)
         {
-            return Integer.compare(this.cost, other.cost);
+            return Double.compare(this.cost, other.cost);
         }
     }
 }
