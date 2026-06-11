@@ -32,7 +32,7 @@ public class BellmanFord implements Search
         String[]                path;
         int                     idx, numVertices;
         double                  weight, newDist;
-        Double                  totalCost;
+        Double                  totalCost, oldDist;
         boolean                 anyChange;
 
         if (src == null || dest == null || graph == null)
@@ -78,8 +78,9 @@ public class BellmanFord implements Search
                     {
                         weight  = graph.weight(node, edge);
                         newDist = distances.get(node) + weight;
+                        oldDist = distances.get(edge);
 
-                        if (newDist < distances.get(edge))
+                        if (oldDist == null || newDist < oldDist)
                         {
                             distances   .put(edge, newDist);
                             predecessors.put(edge, node);
