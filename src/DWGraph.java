@@ -435,12 +435,7 @@ public class DWGraph extends Graph
 
         if (src.equals("<ALL>") && dest.equals("<ALL>"))
         {
-            if (!(this.search instanceof FloydWarshall))
-            {
-                this.search = new FloydWarshall();
-            }
-
-            return this.search.search();
+            //TODO FloydWarshall
         }
 
         weight = this.graph.weight(src, dest);
@@ -452,19 +447,13 @@ public class DWGraph extends Graph
 
         if (weight < 0)
         {
-            if (!(this.search instanceof BellmanFord))
-            {
-                this.search = new BellmanFord();
-            }
+            // TODO BellmanFord
         }
         else
         {
-            if (!(this.search instanceof Dijkstras))
-            {
-                this.search = new Dijkstras();
-            }
+            // TODO Dijkstras
         }
 
-        return this.search.search();
+        return null; // TODO return path
     }
 }

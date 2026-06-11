@@ -135,6 +135,8 @@ public class Dijkstras implements Search
         {
             path[idx] = curr.name;
             curr      = curr.backtrace;
+
+            idx--;
         }
 
         return path;
