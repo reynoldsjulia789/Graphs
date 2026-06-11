@@ -24,6 +24,7 @@ public class BellmanFord implements Search
      * @param graph the graph to search
      * @return record containing information about the shortest path
      */
+    @Override
     public Path search(String src, String dest, Digraph graph)
     {
         HashMap<String, Double> distances;
@@ -106,7 +107,7 @@ public class BellmanFord implements Search
 
         path = assemblePath(predecessors, src, dest);
 
-        return new Path(src, dest, totalCost, graph, path);
+        return new Path(src, dest, totalCost, graph, path, null);
     }
 
     /**

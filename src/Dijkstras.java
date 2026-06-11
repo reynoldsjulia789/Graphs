@@ -48,7 +48,9 @@ public class Dijkstras implements Search
      * @param graph the graph the nodes are in
      * @return a record containing information about the shortest path, or null if src or dest don't exist in
      * the graph or there is no path
+     * @throws IllegalArgumentException thrown if a negative edge weight is found in the graph
      */
+    @Override
     public Path search(String src, String dest, Digraph graph)
     {
         HashSet<String>       knownNodes;
@@ -89,7 +91,7 @@ public class Dijkstras implements Search
 
             if (lowestCost.name.equals(dest))
             {
-                return new Path(src, dest, lowestCost.cost, graph, assemblePath(lowestCost));
+                return new Path(src, dest, lowestCost.cost, graph, assemblePath(lowestCost), null);
             }
 
             for (String edge : graph.edges(lowestCost.name))

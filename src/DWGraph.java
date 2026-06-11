@@ -26,7 +26,7 @@ public class DWGraph extends Graph
     private double  mtxThreshold;   // matrix threshold
     private double  lstThreshold;   // list threshold
     private Search  search;
-    private HashMap<String, Integer> negativeEdges;
+    private boolean negativeEdges;
 
     /**
      * Constructor
@@ -36,7 +36,7 @@ public class DWGraph extends Graph
         this.graph         = new AdjList();
         this.mtxThreshold  = 0.5;
         this.lstThreshold  = 0.25;
-        this.negativeEdges = new HashMap<>();
+        this.negativeEdges = false;
     }
 
     /**
@@ -86,7 +86,7 @@ public class DWGraph extends Graph
 
         if (result && (weight < 0))
         {
-            this.negativeEdges.put(src, (this.negativeEdges.get(src) + 1));
+            this.negativeEdges = true;
         }
 
         convert();
@@ -106,8 +106,6 @@ public class DWGraph extends Graph
 
         result = this.graph.delete(key);
 
-        // TODO: how do you accurately track if there are still negative edges in the graph????
-
         convert();
 
         return result;
@@ -125,11 +123,6 @@ public class DWGraph extends Graph
         Double result;
 
         result = this.graph.delete(src, dest);
-
-        if ((result != null) && (result < 0))
-        {
-            this.negativeEdges.put(src, (this.negativeEdges.get(src) - 1));
-        }
 
         convert();
 
@@ -423,13 +416,9 @@ public class DWGraph extends Graph
      * @param dest the destination node in the graph
      * @return the Shortest path, or null if invalid inputs
      */
-    public Record search(String src, String dest)
+    public Search.Path search(String src, String dest)
     {
-        Dijkstras     d;
-        BellmanFord   bf;
-        FloydWarshall fw;
-        Record        results;
-        Double        weight;
+        ArrayList<String> nodes;
 
         if (src == null || dest == null)
         {
@@ -438,32 +427,27 @@ public class DWGraph extends Graph
 
         if (src.equals("<ALL>") && dest.equals("<ALL>"))
         {
-            fw          = new FloydWarshall();
-            this.search = fw;
-
-            //TODO FloydWarshall
-
-
+            this.search = new FloydWarshall();
         }
-
-        weight = this.graph.weight(src, dest);
-
-        if (weight == null)
+        else
         {
-            return null;
+            nodes = this.graph.nodes();
+
+            if (!nodes.contains(src) || !nodes.contains(dest))
+            {
+                return null;
+            }
+
+            if (this.negativeEdges)
+            {
+                this.search = new BellmanFord();
+            }
+            else
+            {
+                this.search = new Dijkstras();
+            }
         }
 
-        if (weight < 0)
-        {
-            bf          = new BellmanFord();
-            this.search = bf;
-
-            return bf.search(src, dest, this.graph);
-        }
-
-        d           = new Dijkstras();
-        this.search = d;
-
-        return d.search(src, dest, this.graph);
+        return this.search.search(src, dest, graph);
     }
 }
