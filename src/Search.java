@@ -33,7 +33,9 @@ public interface Search
     Path search(String src, String dest, Digraph graph);
 
     /**
-     *  String src, String dest, a double cost, the graph object, and String[] path consisting of the names of vertices on the shortest path from src to dest
+     *  String src, String dest, a double cost, the graph object, and String[] path consisting of the names of vertices
+     *  on the shortest path from src to dest, HashMap with all paths returned from FloydWarshall
      */
-    record Path(String src, String dest, double cost, Digraph graph, String[] path, HashMap<String, HashMap<String, Path>> allPaths) {}
+    record Path(String src, String dest, Double cost, Digraph graph, String[] path,
+                HashMap<String, HashMap<String, Path>> allPaths) {}
 }
