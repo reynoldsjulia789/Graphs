@@ -98,7 +98,7 @@ public class BellmanFord implements Search
 
         totalCost = distances.get(dest);
 
-        if (negativeCycle(graph, distances) || totalCost == null)
+        if (negativeCycle(graph, distances) || (totalCost == null))
         {
             return null;
         }

@@ -56,4 +56,50 @@ public class SearchTest
             assertEquals(2.0, shortestPath.cost());
         }
     }
+
+    @Nested
+    @DisplayName("Verify BellmanFord works")
+    class VerifyBellmanFord
+    {
+        @Test
+        @DisplayName("Finds path simple adjList")
+        public void simple()
+        {
+            Digraph     testGraph;
+            BellmanFord bellmanFord;
+            Search.Path shortestPath;
+
+            testGraph    = new AdjList();
+
+            testGraph.add("src", "dest", 1.0);
+
+            bellmanFord  = new BellmanFord();
+            shortestPath = bellmanFord.search("src", "dest", testGraph);
+
+            assertEquals("[src, dest]", Arrays.toString(shortestPath.path()));
+        }
+
+        @Test
+        @DisplayName("Finds path simple adjList")
+        public void simple2()
+        {
+            Digraph     testGraph;
+            BellmanFord bellmanFord;
+            Search.Path shortestPath;
+
+            testGraph    = new AdjList();
+
+            testGraph.add("src", "v1", 0.5);
+            testGraph.add("v1", "dest", 2.0);
+
+            testGraph.add("src", "v2", 1.0);
+            testGraph.add("v2", "dest", 1.0);
+
+            bellmanFord  = new BellmanFord();
+            shortestPath = bellmanFord.search("src", "dest", testGraph);
+
+            assertEquals("[src, v2, dest]", Arrays.toString(shortestPath.path()));
+            assertEquals(2.0, shortestPath.cost());
+        }
+    }
 }
