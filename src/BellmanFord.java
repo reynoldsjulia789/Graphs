@@ -28,7 +28,7 @@ public class BellmanFord implements Search
     {
         HashMap<String, Double> distances;
         HashMap<String, String> predecessors;
-        ArrayList<String>       nodeList, edges;
+        ArrayList<String>       nodes, edges;
         String[]                path;
         int                     idx, numVertices;
         double                  weight, newDist;
@@ -40,17 +40,17 @@ public class BellmanFord implements Search
             return null;
         }
 
-        nodeList     = graph.nodes();
-        numVertices  = nodeList.size();
+        nodes        = graph.nodes();
+        numVertices  = nodes.size();
         distances    = new HashMap<>();
         predecessors = new HashMap<>();
 
-        if (!nodeList.contains(src) || !nodeList.contains(dest))
+        if (!nodes.contains(src) || !nodes.contains(dest))
         {
             return null;
         }
 
-        for (String node : nodeList)
+        for (String node : nodes)
         {
             distances   .put(node, null);
             predecessors.put(node, null);
@@ -62,7 +62,7 @@ public class BellmanFord implements Search
         {
             anyChange = false;
 
-            for (String node : nodeList)
+            for (String node : nodes)
             {
                 // Skip if the current vertex distance is unreachable
                 if (distances.get(node) == null)
