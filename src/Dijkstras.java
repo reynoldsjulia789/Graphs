@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.HashSet;
 
 /**
  * A class implementing Dijkstra's algorithm to search a graph for the shortest path from
@@ -50,7 +51,7 @@ public class Dijkstras implements Search
      */
     public Path search(String src, String dest, Digraph graph)
     {
-        ArrayList<String>     knownNodes;
+        HashSet<String>       knownNodes;
         PriorityQueue<Node>   unknownNodes;
         HashMap<String, Node> nodeMap;
         Node                  curr, source, lowestCost;
@@ -69,7 +70,7 @@ public class Dijkstras implements Search
         }
 
         unknownNodes = new PriorityQueue<>();
-        knownNodes   = new ArrayList<>();
+        knownNodes   = new HashSet<>();
         source       = nodeMap.get(src);
         source.cost  = 0;
 
@@ -170,7 +171,7 @@ public class Dijkstras implements Search
         private Node(String name)
         {
             this.name        = name;
-            this.cost        = Integer.MAX_VALUE;
+            this.cost        = Double.POSITIVE_INFINITY;
             this.backtrace   = null;
             this.nodesInPath = 1;
         }

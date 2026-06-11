@@ -423,10 +423,13 @@ public class DWGraph extends Graph
      * @param dest the destination node in the graph
      * @return the Shortest path, or null if invalid inputs
      */
-    public Search.Path search(String src, String dest)
+    public Record search(String src, String dest)
     {
-        Search.Path results;
-        Double      weight;
+        Dijkstras     d;
+        BellmanFord   bf;
+        FloydWarshall fw;
+        Record        results;
+        Double        weight;
 
         if (src == null || dest == null)
         {
@@ -435,7 +438,12 @@ public class DWGraph extends Graph
 
         if (src.equals("<ALL>") && dest.equals("<ALL>"))
         {
+            fw          = new FloydWarshall();
+            this.search = fw;
+
             //TODO FloydWarshall
+
+
         }
 
         weight = this.graph.weight(src, dest);
@@ -447,13 +455,15 @@ public class DWGraph extends Graph
 
         if (weight < 0)
         {
-            // TODO BellmanFord
-        }
-        else
-        {
-            // TODO Dijkstras
+            bf          = new BellmanFord();
+            this.search = bf;
+
+            return bf.search(src, dest, this.graph);
         }
 
-        return null; // TODO return path
+        d           = new Dijkstras();
+        this.search = d;
+
+        return d.search(src, dest, this.graph);
     }
 }
